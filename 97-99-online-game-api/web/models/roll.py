@@ -6,7 +6,7 @@ from web.models.model_base import ModelBase
 
 
 class Roll(ModelBase):
-    __tablename__ = 'rolls'
+    __tablename__ = "rolls"
     __table_args__ = (
         Index(None, "id"),
     )
@@ -17,9 +17,9 @@ class Roll(ModelBase):
 
     def to_json(self):
         return {
-            'id': self.id,
-            'created': self.created.isoformat(),
-            'name': self.name,
+            "id": self.id,
+            "created": self.created.isoformat(),
+            "name": self.name,
         }
 
     def __repr__(self) -> str:

@@ -61,7 +61,7 @@ def find_player(name: str) -> Player:
 def create_player(name: str) -> Player:
     player = find_player(name)
     if player:
-        raise Exception("Player already exists")
+        raise ValueError("Player already exists")
 
     player = Player()
     player.name = name

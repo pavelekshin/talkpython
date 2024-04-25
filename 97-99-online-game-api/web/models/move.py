@@ -7,7 +7,7 @@ from web.models.model_base import ModelBase
 
 
 class Move(ModelBase):
-    __tablename__ = 'moves'
+    __tablename__ = "moves"
     __table_args__ = (
         Index(None, "player_id", "id", "is_winning_play"),  # create multicolumn index
     )
@@ -20,21 +20,21 @@ class Move(ModelBase):
     is_winning_play: Mapped[Boolean] = mapped_column(Boolean, default=False, nullable=False)
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now, index=True)
 
-    def to_json(self, roll: 'Roll', player: 'Player'):
+    def to_json(self, roll: "Roll", player: "Player"):
         if self.roll_id != roll.id:
             raise Exception("Mismatched roll values")
         if self.player_id != player.id:
             raise Exception("Mismatched player values")
 
         return {
-            'id': self.id,
-            'created': self.created.isoformat(),
-            'roll_id': self.roll_id,
-            'roll': roll.name,
-            'player_id': self.player_id,
-            'player': player.name,
-            'roll_number': self.roll_number,
-            'is_winning_play': self.is_winning_play,
+            "id": self.id,
+            "created": self.created.isoformat(),
+            "roll_id": self.roll_id,
+            "roll": roll.name,
+            "player_id": self.player_id,
+            "player": player.name,
+            "roll_number": self.roll_number,
+            "is_winning_play": self.is_winning_play,
         }
 
     def __repr__(self) -> str:

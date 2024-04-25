@@ -14,8 +14,8 @@ __factory = None
 def global_init():
     global __factory
 
-    full_file = db_folder.get_db_path('rock_paper_scissors.sqlite')
-    conn_str = 'sqlite:///' + full_file
+    full_file = db_folder.get_db_path("rock_paper_scissors.sqlite")
+    conn_str = "sqlite:///" + full_file
     engine = sa.create_engine(conn_str, echo=False, pool_size=10, )
     ModelBase.metadata.create_all(engine, checkfirst=True, )
 

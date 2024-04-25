@@ -19,34 +19,34 @@ import plotly.graph_objs as go
 # GSM	If the character is a gender or sexual minority (e.g. Homosexual characters, bisexual characters)
 # ALIVE	If the character is alive or deceased
 # APPEARANCES	The number of appareances of the character in comic books (as of Sep. 2, 2014. Number will become increasingly out of date as time goes on.)
-# FIRST APPEARANCE	The month and year of the character's first appearance in a comic book, if available
-# YEAR	The year of the character's first appearance in a comic book, if available
+# FIRST APPEARANCE	The month and year of the character"s first appearance in a comic book, if available
+# YEAR	The year of the character"s first appearance in a comic book, if available
 
-DATA = 'data/marvel-wikia-data.csv'
-Character = namedtuple('Character', 'pid name sid align eye hair sex gsm alive appearances first_year year')
+DATA = "data/marvel-wikia-data.csv"
+Character = namedtuple("Character", "pid name sid align eye hair sex gsm alive appearances first_year year")
 
 
 def convert_csv_to_dict(data=DATA):
-    '''write a function to parse marvel-wikia-data.csv, see
+    """write a function to parse marvel-wikia-data.csv, see
        https://docs.python.org/3.7/library/csv.html#csv.DictReader
        should return a list of OrderedDicts or a list of Character
-       namedtuples (see Character namedtuple above')'''
+       namedtuples (see Character namedtuple above")"""
     with open(data) as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
             yield Character(
-                pid=row['page_id'],
-                name=row['name'].split('(')[0].strip(),
-                sid=row['ID'],
-                align=row['ALIGN'],
-                eye=row['EYE'],
-                hair=row['HAIR'],
-                sex=row['SEX'],
-                gsm=row['GSM'],
-                alive=row['ALIVE'],
-                appearances=row['APPEARANCES'] if row['APPEARANCES'] else 0,
-                first_year=row['FIRST APPEARANCE'] if row['FIRST APPEARANCE'] else 0,
-                year=row['Year'],
+                pid=row["page_id"],
+                name=row["name"].split("(")[0].strip(),
+                sid=row["ID"],
+                align=row["ALIGN"],
+                eye=row["EYE"],
+                hair=row["HAIR"],
+                sex=row["SEX"],
+                gsm=row["GSM"],
+                alive=row["ALIVE"],
+                appearances=row["APPEARANCES"] if row["APPEARANCES"] else 0,
+                first_year=row["FIRST APPEARANCE"] if row["FIRST APPEARANCE"] else 0,
+                year=row["Year"],
             )
 
 
@@ -54,18 +54,18 @@ data = list(convert_csv_to_dict())
 
 
 def most_popular_characters(n=5):
-    '''get the most popular character by number of appearances
+    """get the most popular character by number of appearances
        accept an argument of n (int) of most popular characters
-       to return (leave default of 5)'''
+       to return (leave default of 5)"""
     sorted_data = sorted(data, key=lambda x: int(x.appearances), reverse=True)
     return [each.name for each in sorted_data][:n]
 
 
 def max_and_min_years_new_characters():
-    '''Get the year with most and least new characters introduced respectively,
-       use either the 'FIRST APPEARANCE' or 'Year' column in the csv data, or
-       the 'year' attribute of the namedtuple, return a tuple of
-       (max_year, min_year)'''
+    """Get the year with most and least new characters introduced respectively,
+       use either the "FIRST APPEARANCE" or "Year" column in the csv data, or
+       the "year" attribute of the namedtuple, return a tuple of
+       (max_year, min_year)"""
     years = [each.year for each in data if each.year]
     cnt = Counter(years)
     max_year = cnt.most_common()[0][0]
@@ -74,45 +74,45 @@ def max_and_min_years_new_characters():
 
 
 def percentage_female():
-    '''Get the percentage of female characters, only look at male and female
-       for total, ignore the rest, return a percentage rounded to 2 digits'''
+    """Get the percentage of female characters, only look at male and female
+       for total, ignore the rest, return a percentage rounded to 2 digits"""
     character_sex = [each.sex for each in data]
     cnt = Counter(character_sex)
-    total = cnt['Male Characters'] + cnt['Female Characters']
-    return round(cnt['Female Characters'] / total * 100, 2)
+    total = cnt["Male Characters"] + cnt["Female Characters"]
+    return round(cnt["Female Characters"] / total * 100, 2)
 
 
 def gsm_char():
-    '''Return dictionary of not binary characters'''
-    return {each.name: each.gsm for each in data if each.gsm != ''}
+    """Return dictionary of not binary characters"""
+    return {each.name: each.gsm for each in data if each.gsm != ""}
 
 
 def good_vs_bad(sex):
-    '''Return a dictionary of bad vs good vs neutral characters.
-       This function receives an arg 'sex' and should be validated
-       to only receive 'male' or 'female' as valid inputs (should
+    """Return a dictionary of bad vs good vs neutral characters.
+       This function receives an arg "sex" and should be validated
+       to only receive "male" or "female" as valid inputs (should
        be case insensitive, so could also pass it MALE)
 
        The expected result should be a the following dict. The values are
        rounded (int) percentages (values made up here):
 
-       expected = {'Bad Characters': 33,
-                   'Good Characters': 33,
-                   'Neutral Characters': 33})
-    '''
-    if sex.lower() not in ('male', 'female'):
+       expected = {"Bad Characters": 33,
+                   "Good Characters": 33,
+                   "Neutral Characters": 33})
+    """
+    if sex.lower() not in ("male", "female"):
         raise ValueError
 
     characters = [each.align for each in data if sex.title() in each.sex]
     cnt = Counter(characters)
-    total = (cnt['Bad Characters'] +
-             cnt['Good Characters'] +
-             cnt['Neutral Characters'])
+    total = (cnt["Bad Characters"] +
+             cnt["Good Characters"] +
+             cnt["Neutral Characters"])
 
     return {
-        'Bad Characters': round((cnt['Bad Characters'] / total) * 100),
-        'Good Characters': round((cnt['Good Characters'] / total) * 100),
-        'Neutral Characters': round((cnt['Neutral Characters'] / total) * 100),
+        "Bad Characters": round((cnt["Bad Characters"] / total) * 100),
+        "Good Characters": round((cnt["Good Characters"] / total) * 100),
+        "Neutral Characters": round((cnt["Neutral Characters"] / total) * 100),
     }
 
 
@@ -124,38 +124,38 @@ def transpose_list_of_tuples(data):
 
 
 def print_full(x):
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.width', 2000)
-    pd.set_option('display.float_format', '{:20,.2f}'.format)
-    pd.set_option('display.max_colwidth', None)
+    pd.set_option("display.max_rows", None)
+    pd.set_option("display.max_columns", None)
+    pd.set_option("display.width", 2000)
+    pd.set_option("display.float_format", "{:20,.2f}".format)
+    pd.set_option("display.max_colwidth", None)
     print(x)
-    pd.reset_option('display.max_rows')
-    pd.reset_option('display.max_columns')
-    pd.reset_option('display.width')
-    pd.reset_option('display.float_format')
-    pd.reset_option('display.max_colwidth')
+    pd.reset_option("display.max_rows")
+    pd.reset_option("display.max_columns")
+    pd.reset_option("display.width")
+    pd.reset_option("display.float_format")
+    pd.reset_option("display.max_colwidth")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # categories = gsm_char()
     # x, y = transpose_list_of_tuples(categories)
 
     print(most_popular_characters())
     print(max_and_min_years_new_characters())
     print(percentage_female())
-    print(good_vs_bad('female'))
-    print(good_vs_bad('male'))
+    print(good_vs_bad("female"))
+    print(good_vs_bad("male"))
 
     df = pd.DataFrame(data)
 
-    #bar plot
+    # bar plot
     fig = px.bar(
-        df[df['gsm'].str.strip().astype(bool)],
-        x='name',
-        y='gsm',
-        color='gsm',
-        orientation='v',
+        df[df["gsm"].str.strip().astype(bool)],
+        x="name",
+        y="gsm",
+        color="gsm",
+        orientation="v",
     )
 
     fig.update_layout(
@@ -164,7 +164,7 @@ if __name__ == '__main__':
             font=dict(size=32,
                       color="Blue"),
             automargin=True,
-            yref='paper'),
+            yref="paper"),
         autosize=True,
         title_x=0.5,
         title_y=0.5,
@@ -190,21 +190,20 @@ if __name__ == '__main__':
         legend=dict(
             # x=0,
             y=0.5,
-            # bgcolor='rgba(255, 255, 255, 0)',
-            # bordercolor='rgba(255, 255, 255, 0)'
+            # bgcolor="rgba(255, 255, 255, 0)",
+            # bordercolor="rgba(255, 255, 255, 0)"
         ),
-        # barmode='group',
+        # barmode="group",
         bargap=0.15,  # gap between bars of adjacent location coordinates.
         bargroupgap=0.1  # gap between bars of the same location coordinate.
     )
     fig.update_traces(hoverinfo="all", hovertemplate="Значение: %{x}<br>Значение: %{y}")
-    plotly.offline.plot(fig, auto_play=False, auto_open=False, filename='hero_gsm')
+    plotly.offline.plot(fig, auto_play=False, auto_open=False, filename="hero_gsm")
 
-
-    #pie / sunburst plot
-    df.loc[df['gsm'].str.len() == 0, 'gsm'] = 'Other'  # Represent only nonbinary gender
-    df = df.loc[df['gsm'] != 'Other']
-    df['cnt'] = df['gsm'].map(df['gsm'].value_counts())
+    # pie / sunburst plot
+    df.loc[df["gsm"].str.len() == 0, "gsm"] = "Other"  # Represent only nonbinary gender
+    df = df.loc[df["gsm"] != "Other"]
+    df["cnt"] = df["gsm"].map(df["gsm"].value_counts())
     df["percent"] = df["cnt"] / df["cnt"]
 
     print_full(df.head())
@@ -213,7 +212,7 @@ if __name__ == '__main__':
                .agg(count=("gsm", "size"), heroes=("name", list), years=("year", list))
                .sort_values(["count", "gsm"], ascending=[0, 1]))
 
-    # fig = px.pie(df, values='percent', names='gsm', title='GSM')
+    # fig = px.pie(df, values="percent", names="gsm", title="GSM")
     fig = px.sunburst(df,
                       values="percent",
                       path=["gsm", "name"],
@@ -226,21 +225,21 @@ if __name__ == '__main__':
     fig.update_traces(hoverinfo="all", textinfo="value")
     plotly.offline.plot(fig, auto_play=False, auto_open=False, filename="hero_gsm_pie")
 
-
-    #scatter plot
+    # scatter plot
     df3 = df.groupby("gsm", as_index=False).agg(count=("gsm", "size"), heroes=("name", list),
                                                 years=("year", list)).sort_values(["count", "gsm"], ascending=[0, 1])
 
 
     def f(x, y):
-        return '<br>'.join(f"{h} {z}" for h, z in zip(x, y))
+        return "<br>".join(f"{h} {z}" for h, z in zip(x, y))
+
 
     df3["heroes_label"] = df3[["heroes", "years"]].apply(lambda x: f(*x), axis=1)
 
     fig = px.scatter(df3,
                      x="count",
                      y="gsm",
-                     # custom_data=['heroes'],
+                     # custom_data=["heroes"],
                      size="count",
                      color="gsm",
                      hover_data=["heroes_label", "years"],

@@ -21,8 +21,8 @@ def main():
 
 def build_rolls() -> List[Roll]:
     rolls = []
-    with open('battle-table.csv') as fin:
-        reader = csv.DictReader(fin)
+    with open("battle-table.csv") as f:
+        reader = csv.DictReader(f)
         for row in reader:
             rolls.append(build_roll(row))
 
@@ -31,7 +31,7 @@ def build_rolls() -> List[Roll]:
 
 def build_roll(row: dict):
     row = dict(row)
-    name = row['Attacker']
+    name = row["Attacker"]
     roll = game_service.find_roll(name)
     if not roll:
         roll = game_service.create_roll(name)
@@ -58,5 +58,5 @@ def print_high_scores():
         print(f" {idx}. {w[0].name} {w[1]} wins")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

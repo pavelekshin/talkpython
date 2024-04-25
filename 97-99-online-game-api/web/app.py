@@ -20,14 +20,14 @@ def build_starter_data():
     roll_names = game_decider.all_roll_names()
     game_service.init_rolls(roll_names)
 
-    computer = game_service.find_player('computer')
+    computer = game_service.find_player("computer")
     if not computer:
-        game_service.create_player('computer')
+        game_service.create_player("computer")
 
 
 def run_web_app():
     app.run(debug=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

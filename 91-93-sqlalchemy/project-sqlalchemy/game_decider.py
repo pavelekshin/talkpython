@@ -30,7 +30,7 @@ def _build_decisions():
     if _winner_lookup:
         return
 
-    with open('battle-table.csv') as fin:
+    with open("battle-table.csv") as fin:
         reader = csv.DictReader(fin)
         for row in reader:
             _build_roll(row)
@@ -38,13 +38,13 @@ def _build_decisions():
 
 def _build_roll(row: dict):
     row = dict(row)
-    name = row['Attacker']
+    name = row["Attacker"]
 
-    del row['Attacker']
+    del row["Attacker"]
     del row[name]
 
     _winner_lookup[name] = set()
     for k in row.keys():
-        can_defeat = row[k].strip().lower() == 'win'
+        can_defeat = row[k].strip().lower() == "win"
         if can_defeat:
             _winner_lookup[name].add(k)

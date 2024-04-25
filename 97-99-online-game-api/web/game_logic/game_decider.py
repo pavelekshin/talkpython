@@ -22,11 +22,11 @@ class Decision(Enum):
 
     def __str__(self):
         if self == Decision.win:
-            return 'win'
+            return "win"
         if self == Decision.lose:
-            return 'lose'
+            return "lose"
         if self == Decision.tie:
-            return 'tie'
+            return "tie"
 
         return "UNKNOWN DECISION: {}".format(self)
 
@@ -49,7 +49,7 @@ def __build_decisions():
     if __winner_lookup:
         return
 
-    file = db_folder.get_db_path('battle-table.csv')
+    file = db_folder.get_db_path("battle-table.csv")
 
     with open(file) as fin:
         reader = csv.DictReader(fin)
@@ -59,14 +59,14 @@ def __build_decisions():
 
 def __build_roll(row: dict):
     row = dict(row)
-    name = row['Attacker']
+    name = row["Attacker"]
 
-    del row['Attacker']
+    del row["Attacker"]
     del row[name]
 
     __winner_lookup[name] = set()
     for k in row.keys():
-        can_defeat = row[k].strip().lower() == 'win'
+        can_defeat = row[k].strip().lower() == "win"
         if can_defeat:
             __winner_lookup[name].add(k)
 
