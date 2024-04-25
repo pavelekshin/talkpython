@@ -23,7 +23,7 @@ def re_replace(INPUT):
     """,
         re.VERBOSE,
     )
-    n = N
+    n = INPUT
     for _ in range(int(n)):
         l = INPUT
         print(re.sub(p, replace, l))
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     #Only change those '&&' which have space on both sides.
     #Only change those '|| which have space on both sides."""
 
-    print(len(INPUT.split("\n"))
+    print(len(INPUT.split("\n")))
     assert re_replace(INPUT) == OUTPUT

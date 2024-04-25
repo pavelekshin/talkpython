@@ -23,7 +23,7 @@ def raise_for_status(response):
         # Pass through the response.
         return response
 
-    api_log.warn(
+    api_log.warning(
         "Error on request {}, response body {}, status code {} ".format(
             response.url, response.content, response.status_code
         )
@@ -33,7 +33,7 @@ def raise_for_status(response):
 
 def raise_api_error(e_type, e_instance, e_traceback):
     """Wraps client error with custom API error"""
-    api_log.warn(
+    api_log.warning(
         "Exception {}, rised {} with traceback {}.".format(
             e_type, e.instance, e_traceback
         )

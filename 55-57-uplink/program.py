@@ -1,11 +1,9 @@
 import functools
 import time
-import logbook
 from collections import namedtuple
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import api
-
 
 URL = "http://www.omdbapi.com/"
 APIKEY = "4ef2f6df"
@@ -25,7 +23,7 @@ def main():
     ms = api.MovieSearch(URL, APIKEY)
 
     if not keyword:
-        app_log.warn("No keyword supplied")
+        app_log.warning("No keyword supplied")
         raise ValueError("Must specify a search term (keyword).")
 
     app_log.debug("Starting search for {}".format(keyword))
@@ -55,7 +53,7 @@ def main():
     movieid = input("\nSelect one of movie: ")
 
     if not movieid:
-        app_log.warn("No imdbID is provided")
+        app_log.warning("No imdbID is provided")
         raise ValueError("Must specify a search term (imdbID).")
 
     imdbid = movies[int(movieid) - 1].imdbID
@@ -89,7 +87,7 @@ def main():
         )
 
 
-def init_py_logging(filename: str = None):
+def init_logging(filename: str = None):
     # create formatter
     formatter = "[%(asctime)s] : [%(name)s] : [%(levelname)s]:  %(message)s"
 
@@ -117,5 +115,5 @@ def init_py_logging(filename: str = None):
 
 
 if __name__ == "__main__":
-    init_py_logging("movie_log")
+    init_logging("movie_log")
     main()
