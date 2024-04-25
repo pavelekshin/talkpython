@@ -16,7 +16,7 @@ def global_init():
 
     full_file = db_folder.get_db_path('rock_paper_scissors.sqlite')
     conn_str = 'sqlite:///' + full_file
-    engine = sa.create_engine(conn_str, echo=False, pool_size=100, )
+    engine = sa.create_engine(conn_str, echo=False, pool_size=10, )
     ModelBase.metadata.create_all(engine, checkfirst=True, )
 
     __factory = orm.sessionmaker(bind=engine, expire_on_commit=False)
@@ -39,3 +39,5 @@ def get_session() -> Session:
     except OperationalError as err:
         session.rollback()
         print(f"Oops! {err}")
+    finally:
+        session.commit()

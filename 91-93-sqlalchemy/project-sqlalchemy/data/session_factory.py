@@ -36,6 +36,5 @@ def get_session() -> Session:
     except OperationalError as err:
         session.rollback()
         print(f"Oops! {err}")
-    # else:
-    #     print("Session commit!", session)
-    #     session.commit()
+    finally:
+        session.commit()
