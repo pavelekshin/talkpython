@@ -52,19 +52,21 @@ def game_loop(player1, player2, rolls):
     show_history([player1, player2], rolls, game_id)
     print(game_service.delete_game_history(game_id))
 
+
 def show_history(players, rolls, game_id):
     history = game_service.get_game_history(game_id)
-    history = [{
-        "name": row.name,
-        "player_id": row.player_id,
-        "roll_number": row.roll_number,
-        "roll": row.roll,
-        "game_id": game_id
-    } for row in history
-    ]
+    show_history = [
+        {
+            "name": row.name,
+            "player_id": row.player_id,
+            "roll_number": row.roll_number,
+            "roll": row.roll,
+            "game_id": game_id
+        } for row in history]
 
-    for item in history:
+    for item in show_history:
         print(item)
+
 
 def get_roll_choice(rolls: List[Roll]):
     print("Rolls: ")

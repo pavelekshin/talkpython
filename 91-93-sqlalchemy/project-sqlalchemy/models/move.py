@@ -23,6 +23,6 @@ class Move(ModelBase):
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now, index=True)
 
     def __repr__(self) -> str:
-        return f"Move(id={self.id!r}, roll_id={self.roll_id!r}, game_id={self.game_id!r}, \
+        return f"{type(self).__qualname__}(id={self.id!r}, roll_id={self.roll_id!r}, game_id={self.game_id!r}, \
                     roll_number={self.roll_number!r}, player_id={self.player_id!r}, \
                     is_winning_play={self.is_winning_play!r}, created={self.created!r})"

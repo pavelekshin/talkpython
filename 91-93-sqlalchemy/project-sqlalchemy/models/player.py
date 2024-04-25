@@ -18,4 +18,4 @@ class Player(ModelBase):
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now)
 
     def __repr__(self) -> str:
-        return f"Player(id={self.id!r}, name={self.name!r}, created={self.created!r})"
+        return f"{type(self).__qualname__}(id={self.id!r}, name={self.name!r}, created={self.created!r})"

@@ -79,7 +79,7 @@ def all_rolls() -> List[Roll]:
     return rolls
 
 
-def find_roll(name: str) -> Optional['Roll']:
+def find_roll(name: str) -> Optional[Roll]:
     session = session_factory.get_session()
     with session as session:
         roll = session.scalars(
@@ -89,7 +89,7 @@ def find_roll(name: str) -> Optional['Roll']:
     return roll
 
 
-def create_roll(name: str) -> 'Roll':
+def create_roll(name: str) -> Roll:
     session = session_factory.get_session()
     roll = Roll()
     roll.name = name

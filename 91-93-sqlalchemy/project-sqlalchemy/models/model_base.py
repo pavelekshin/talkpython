@@ -16,5 +16,5 @@ naming_convention = {
 
 class ModelBase(DeclarativeBase):
     metadata = metadata_base
-    metadata.naming_convention=naming_convention
+    metadata.naming_convention = naming_convention
     pass
