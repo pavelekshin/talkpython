@@ -6,10 +6,21 @@ from web.models.player import Player
 from web.models.roll import Roll
 
 
+class GameOverException(Exception):
+    pass
+
+
 class GameRound:
 
-    def __init__(self, game_id: str, player1: Player, player2: Player,
-                 p1_roll: Roll, p2_roll: Roll):
+    def __init__(
+            self,
+            game_id: str,
+            player1: Player,
+            player2: Player,
+            p1_roll: Roll,
+            p2_roll: Roll
+    ):
+
         self.p2_roll = p2_roll
         self.p1_roll = p1_roll
         self.game_id = game_id
@@ -27,7 +38,7 @@ class GameRound:
 
     def play(self):
         if self.is_over:
-            raise Exception("Game is already over, cannot play further.")
+            raise GameOverException("Game is already over, cannot play further.")
 
         d = game_decider.decide(self.p1_roll, self.p2_roll)
         self.decision_p1_to_p2 = d
