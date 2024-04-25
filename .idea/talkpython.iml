@@ -5,6 +5,10 @@
       <sourceFolder url="file://$MODULE_DIR$/82-84-dataviz-plotly/project-plotly" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/91-93-sqlalchemy/project-sqlalchemy" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/97-99-online-game-api" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/82-84-dataviz-plotly/project-plotly/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/91-93-sqlalchemy/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/91-93-sqlalchemy/project-sqlalchemy/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/97-99-online-game-api/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/97-99-online-game-api/venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (talkpython) (3)" jdkType="Python SDK" />
