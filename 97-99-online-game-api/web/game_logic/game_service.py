@@ -11,19 +11,11 @@ from web.models.player import Player
 from web.models.roll import Roll
 
 
-# def get_game_history(game_id: str) -> List[Move]:
-#     session = session_factory.get_session()
-#     with session as session:
-#         moves = session.execute(
-#             select(Player.name.label("name"), Move.player_id, Move.roll_number, Roll.name.label("roll"),
-#                    Move.is_winning_play,
-#                    Move.game_id).join_from(Move, Player).join_from(Move, Roll)
-#             .filter(Move.game_id == game_id)).all()
-#         print(moves)
-#     return moves
-
-
 def get_game_history(game_id: str) -> List[Move]:
+    """
+    Get game history by game_id
+    :return List[Move]
+    """
     session = session_factory.get_session()
     with session as session:
         history = session.scalars(select(Move)
@@ -34,11 +26,19 @@ def get_game_history(game_id: str) -> List[Move]:
 
 
 def is_game_over(game_id: str) -> bool:
+    """
+    Check if game_id have win flag
+    :return True/False
+    """
     history = get_game_history(game_id)
     return any([h.is_winning_play for h in history])
 
 
 def get_win_count(player: Player) -> int:
+    """
+    Return win count for player
+    :return int
+    """
     session = session_factory.get_session()
     with session as session:
         wins = session.scalars(select(func.count())
@@ -49,6 +49,10 @@ def get_win_count(player: Player) -> int:
 
 
 def find_player(name: str) -> Player:
+    """
+    Find player by name and return their object
+    :return Player object
+    """
     session = session_factory.get_session()
     with session as session:
         player = session.scalars(
@@ -59,6 +63,10 @@ def find_player(name: str) -> Player:
 
 
 def create_player(name: str) -> Player:
+    """
+    Create player object
+    :return Player object
+    """
     player = find_player(name)
     if player:
         raise ValueError("Player already exists")
@@ -78,13 +86,25 @@ def create_player(name: str) -> Player:
 
 
 def all_players() -> List[Player]:
+    """
+    Get list of players
+    :return List[Player]
+    """
     session = session_factory.get_session()
     with session as session:
         players = session.scalars(select(Player)).all()
     return players
 
 
-def record_roll(player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int):
+def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int):
+    """
+    Record roll into DB table
+    :player - Player object
+    :roll - Roll object
+    :game_id - str
+    :is_winning_play - bool
+    :roll_num - int
+    """
     move = Move()
     move.player_id = player.id
     move.roll_id = roll.id
@@ -97,6 +117,10 @@ def record_roll(player, roll: Roll, game_id: str, is_winning_play: bool, roll_nu
 
 
 def all_rolls() -> List[Roll]:
+    """
+    Get all rolls
+    :return List[Roll]
+    """
     session = session_factory.get_session()
     with session as session:
         rolls = session.scalars(select(Roll)).all()
@@ -104,9 +128,13 @@ def all_rolls() -> List[Roll]:
 
 
 def init_rolls(rolls: List[str]):
+    """
+    Init rolls
+    """
     session = session_factory.get_session()
     with session as session:
-        roll_count = session.query(Roll).count()
+        roll_count = session.scalars(select(func.count())
+                                     .select_from(Roll))
 
     if roll_count:
         return
@@ -116,6 +144,10 @@ def init_rolls(rolls: List[str]):
 
 
 def find_roll(name: str) -> Optional[Roll]:
+    """
+    Find roll by their name
+    :return Optional[Roll] object
+    """
     session = session_factory.get_session()
     with session as session:
         roll = session.scalars(
@@ -126,6 +158,9 @@ def find_roll(name: str) -> Optional[Roll]:
 
 
 def create_roll(name: str) -> Roll:
+    """
+    Save roll in DB table
+    """
     roll = Roll()
     roll.name = name
     session = session_factory.get_session()
@@ -139,6 +174,10 @@ def create_roll(name: str) -> Roll:
 
 
 def find_roll_by_id(roll_id: int) -> Roll:
+    """
+    Find roll by roll_id and return found object
+    :return Roll object
+    """
     session = session_factory.get_session()
     with session as session:
         roll = session.scalars(select(Roll).filter(Roll.id == roll_id)).first()
@@ -146,6 +185,10 @@ def find_roll_by_id(roll_id: int) -> Roll:
 
 
 def find_player_by_id(player_id: int) -> Player:
+    """
+    Find player by player_id and return found object
+    :return Player object
+    """
     session = session_factory.get_session()
     with session as session:
         player = session.scalars(select(Player).filter(Player.id == player_id)).first()
@@ -153,8 +196,13 @@ def find_player_by_id(player_id: int) -> Player:
 
 
 def count_round_wins(player_id: int, game_id: str) -> int:
+    """
+    Check round score
+    :return wins - int
+    """
     history = get_game_history(game_id)
     wins = 0
+
     grouped_moves = defaultdict(list)
 
     for h in history:

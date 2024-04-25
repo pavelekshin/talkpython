@@ -20,14 +20,14 @@ def build_views(app):
             if not flask.request.json \
                     or "user" not in flask.request.json \
                     or not flask.request.json.get("user"):
-                raise Exception("Invalid request: no value for user.")
+                raise ValueError("Invalid request: no value for user.")
 
             username = flask.request.json.get("user").strip()
             player = game_service.create_player(username)
 
             return flask.jsonify(player.to_json())
 
-        except Exception as x:
+        except ValueError as x:
             flask.abort(flask.Response(
                 response="Invalid request: {}".format(x),
                 status=400
@@ -84,45 +84,38 @@ def build_views(app):
     def play_round():
         try:
             db_roll, db_user, game_id = validate_round_request()
-            computer_player = game_service.find_player("computer")
-            computer_roll = random.choice(game_service.all_rolls())
-            game = GameRound(game_id, db_user, computer_player, db_roll, computer_roll)
-
-            game.play()
-
-            return flask.jsonify({
-                "roll": db_roll.to_json(),
-                "computer_roll": computer_roll.to_json(),
-                "player": db_user.to_json(),
-                "opponent": computer_player.to_json(),
-                "round_outcome": str(game.decision_p1_to_p2),
-                "is_final_round": game.is_over,
-                "round_number": game.round
-            })
         except ValueError as ex:
             flask.abort(flask.Response(response="Invalid request: {}".format(ex), status=400))
+
+        computer_player = game_service.find_player("computer")
+        computer_roll = random.choice(game_service.all_rolls())
+
+        game = GameRound(game_id, db_user, computer_player, db_roll, computer_roll)
+        game.play()
+        return flask.jsonify({
+            "roll": db_roll.to_json(),
+            "computer_roll": computer_roll.to_json(),
+            "player": db_user.to_json(),
+            "opponent": computer_player.to_json(),
+            "round_outcome": str(game.decision_p1_to_p2),
+            "is_final_round": game.is_over,
+            "round_number": game.round
+        })
 
     def validate_round_request():
         if not flask.request.json:
             raise ValueError("Invalid request: no JSON body.")
-        game_id = flask.request.json.get("game_id")
-        if not game_id:
+        if not (game_id := flask.request.json.get("game_id")):
             raise ValueError("Invalid request: No game_id value")
-        user = flask.request.json.get("user")
-        if not user:
+        if not (user := flask.request.json.get("user")):
             raise ValueError("Invalid request: No user value")
-        db_user = game_service.find_player(user)
-        if not db_user:
+        if not (db_user := game_service.find_player(user)):
             raise ValueError("Invalid request: No user with name {}".format(user))
-        roll = flask.request.json.get("roll")
-        if not roll:
+        if not (roll := flask.request.json.get("roll")):
             raise ValueError("Invalid request: No roll value")
-        db_roll = game_service.find_roll(roll)
-        if not db_roll:
+        if not (db_roll := game_service.find_roll(roll)):
             raise ValueError("Invalid request: No roll with name {}".format(roll))
-
-        is_over = game_service.is_game_over(game_id)
-        if is_over:
+        if is_over := game_service.is_game_over(game_id):
             raise ValueError("This game is already over.")
 
         return db_roll, db_user, game_id
