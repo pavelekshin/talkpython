@@ -18,10 +18,11 @@ def get_game_history(game_id: str) -> List[Move]:
     """
     session = session_factory.get_session()
     with session as session:
-        history = session.scalars(select(Move)
-                                  .filter(Move.game_id == game_id)
-                                  .order_by(Move.roll_number)
-                                  ).all()
+        history = session.scalars(
+            select(Move)
+            .filter(Move.game_id == game_id)
+            .order_by(Move.roll_number)
+        ).all()
     return history
 
 
@@ -41,10 +42,12 @@ def get_win_count(player: Player) -> int:
     """
     session = session_factory.get_session()
     with session as session:
-        wins = session.scalars(select(func.count())
-                               .select_from(Move)
-                               .filter(Move.player_id == player.id)
-                               .filter(Move.is_winning_play)).one()
+        wins = session.scalars(
+            select(func.count())
+            .select_from(Move)
+            .filter(Move.player_id == player.id)
+            .filter(Move.is_winning_play)
+        ).one()
     return wins
 
 
@@ -92,7 +95,9 @@ def all_players() -> List[Player]:
     """
     session = session_factory.get_session()
     with session as session:
-        players = session.scalars(select(Player)).all()
+        players = session.scalars(
+            select(Player)
+        ).all()
     return players
 
 
@@ -111,6 +116,7 @@ def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool,
     move.game_id = game_id
     move.is_winning_play = is_winning_play
     move.roll_number = roll_num
+
     session = session_factory.get_session()
     with session as session, session.begin():
         session.add(move)
@@ -122,8 +128,10 @@ def all_rolls() -> List[Roll]:
     :return List[Roll]
     """
     session = session_factory.get_session()
-    with session as session:
-        rolls = session.scalars(select(Roll)).all()
+    with (session as session):
+        rolls = session.scalars(
+            select(Roll)
+        ).all()
     return rolls
 
 
@@ -133,8 +141,10 @@ def init_rolls(rolls: List[str]):
     """
     session = session_factory.get_session()
     with session as session:
-        roll_count = session.scalars(select(func.count())
-                                     .select_from(Roll))
+        roll_count = session.scalars(
+            select(func.count())
+            .select_from(Roll)
+        )
 
     if roll_count:
         return
@@ -180,7 +190,10 @@ def find_roll_by_id(roll_id: int) -> Roll:
     """
     session = session_factory.get_session()
     with session as session:
-        roll = session.scalars(select(Roll).filter(Roll.id == roll_id)).first()
+        roll = session.scalars(
+            select(Roll)
+            .filter(Roll.id == roll_id)
+        ).first()
     return roll
 
 
@@ -191,7 +204,10 @@ def find_player_by_id(player_id: int) -> Player:
     """
     session = session_factory.get_session()
     with session as session:
-        player = session.scalars(select(Player).filter(Player.id == player_id)).first()
+        player = session.scalars(
+            select(Player)
+            .filter(Player.id == player_id)
+        ).first()
     return player
 
 
