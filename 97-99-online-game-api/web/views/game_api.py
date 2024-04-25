@@ -20,18 +20,17 @@ def build_views(app):
             if not flask.request.json \
                     or "user" not in flask.request.json \
                     or not flask.request.json.get("user"):
-                raise ValueError("Invalid request: no value for user.")
+                raise ValueError("No value for user.")
 
-            username = flask.request.json.get("user").strip()
-            player = game_service.create_player(username)
+        except ValueError as ex:
+            flask.abort(flask.Response(response="Invalid request: {}".format(ex),
+                                       status=400
+                                       ))
 
-            return flask.jsonify(player.to_json())
+        username = flask.request.json.get("user").strip()
+        player = game_service.create_player(username)
 
-        except ValueError as x:
-            flask.abort(flask.Response(
-                response="Invalid request: {}".format(x),
-                status=400
-            ))
+        return flask.jsonify(player.to_json())
 
     @app.route("/api/game/games", methods=["POST"])
     def create_game():
@@ -104,17 +103,17 @@ def build_views(app):
 
     def validate_round_request():
         if not flask.request.json:
-            raise ValueError("Invalid request: no JSON body.")
+            raise ValueError("No JSON body.")
         if not (game_id := flask.request.json.get("game_id")):
-            raise ValueError("Invalid request: No game_id value")
+            raise ValueError("No game_id value")
         if not (user := flask.request.json.get("user")):
-            raise ValueError("Invalid request: No user value")
+            raise ValueError("No user value")
         if not (db_user := game_service.find_player(user)):
-            raise ValueError("Invalid request: No user with name {}".format(user))
+            raise ValueError("No user with name {}".format(user))
         if not (roll := flask.request.json.get("roll")):
-            raise ValueError("Invalid request: No roll value")
+            raise ValueError("No roll value")
         if not (db_roll := game_service.find_roll(roll)):
-            raise ValueError("Invalid request: No roll with name {}".format(roll))
+            raise ValueError("No roll with name {}".format(roll))
         if is_over := game_service.is_game_over(game_id):
             raise ValueError("This game is already over.")
 

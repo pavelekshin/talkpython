@@ -6,13 +6,12 @@ from api import GameService
 def main():
     svc = GameService()
 
-    print("Game app! (client)")
-    print()
-    print()
+    print("Game app! (client)\n")
     print("TOP SCORES")
     for s in svc.top_scores():
         print("{} scored {}".format(s.get("player").get("name"), s.get("score")))
-    print()
+
+    print("\n")
 
     game_id = svc.create_game().get("game_id")
     rolls = svc.all_rolls()
