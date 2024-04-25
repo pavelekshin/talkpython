@@ -37,4 +37,4 @@ def get_session() -> Session:
         session.rollback()
         print(f"Oops! {err}")
     finally:
-        session.commit()
+        session.remove()
