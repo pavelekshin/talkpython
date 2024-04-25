@@ -2,6 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/82-84-dataviz-plotly/project-plotly" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/91-93-sqlalchemy/project-sqlalchemy" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (talkpython) (2)" jdkType="Python SDK" />

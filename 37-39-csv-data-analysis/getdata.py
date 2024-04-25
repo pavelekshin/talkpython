@@ -18,15 +18,20 @@ Record = collections.namedtuple(
 
 
 def init():
+    for row in read_file():
+        data.append(parse_row(row))
+
+
+def read_file():
     if data:
-        return None
+        return
     dir_name = os.path.dirname(__file__)
     filepath = os.path.join(dir_name, "data", "drinks.csv")
     with open(filepath, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         data.clear()
         for row in reader:
-            data.append(parse_row(row))
+            yield row
 
 
 def parse_row(row):
