@@ -27,7 +27,8 @@ def get_session() -> Session:
     if __factory is None:
         global_init()
 
-    session = orm.scoped_session(__factory)
+    session = __factory()
+
     try:
         yield session
     except SQLAlchemyError as err:
@@ -36,5 +37,5 @@ def get_session() -> Session:
     except OperationalError as err:
         session.rollback()
         print(f"Oops! {err}")
-    finally:
-        session.remove()
+    else:
+        session.commit()

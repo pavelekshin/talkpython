@@ -29,7 +29,7 @@ def get_session() -> Session:
     if __factory is None:
         global_init()
 
-    session = orm.scoped_session(__factory)
+    session = orm.scoped_session(__factory)  # scoped_session is thread-safe and recommended to use in web applications
 
     try:
         yield session
@@ -40,4 +40,4 @@ def get_session() -> Session:
         session.rollback()
         print(f"Oops! {err}")
     finally:
-        session.remove()
+        session.remove()  # recommended to remove session after the use
