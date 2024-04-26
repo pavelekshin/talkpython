@@ -6,7 +6,6 @@ from data.session_factory import db
 
 
 class Roll(db.Model):
-    __tablename__ = "rolls"
     __table_args__ = (
         Index(None, "id"),
     )

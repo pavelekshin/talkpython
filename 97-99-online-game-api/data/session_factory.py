@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session
 from db import db_folder
 from models.model_base import ModelBase
 
-db = SQLAlchemy(model_class=ModelBase)
+db = SQLAlchemy(model_class=ModelBase,
+                session_options={"expire_on_commit": False}
+                )
 
 
 def db_filename(name):
@@ -19,6 +21,7 @@ def get_session() -> Session:
 
     try:
         yield session
+        session.commit()
     except SQLAlchemyError as err:
         session.rollback()
         print(f"Oops! {err}")

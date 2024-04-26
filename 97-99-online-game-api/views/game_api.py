@@ -2,30 +2,45 @@ import random
 import uuid
 
 import flask
+from sqlalchemy.exc import SQLAlchemyError
+
 from services import game_service
 from services.game import GameRound
+from data.session_factory import db
 
 
-def build_views(app):
+def build_views(app: flask.Flask):
     @app.before_request
     def log_request():
         app.logger.info(
-            "path: %s | method: %s | body: %s",
-            flask.request.path,
-            flask.request.method,
-            flask.request.get_json() \
-                if flask.request.is_json \
+            "path: {} | method: {} | body: {}".format(
+                flask.request.path,
+                flask.request.method,
+                flask.request.get_json() if flask.request.is_json
                 else flask.request.data
+            )
         )
 
     @app.after_request
     def log_response(response):
         app.logger.info(
-            "status: %s | body: %s",
-            response.status,
-            response.get_data(as_text=True)
+            "status: {} | body: {}".format(
+                response.status,
+                response.get_data(as_text=True)
+            )
         )
         return response
+
+    @app.teardown_request
+    def teardown_request(ex):
+        if ex:
+            app.logger.error(f"Error: {ex}")
+        db.session.remove()
+
+    @app.errorhandler(SQLAlchemyError)
+    def handle_db_exceptions(ex):
+        app.logger.error(f"Error: {ex}")
+        db.session.rollback()
 
     @app.route("/api/game/users/<string:user>", methods=["GET"])
     def find_user(user: str):

@@ -5,22 +5,24 @@ from sqlalchemy import Integer, String, Boolean, DateTime, ForeignKey, Index
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
+from models.player import Player
+from models.roll import Roll
+
 
 class Move(db.Model):
-    __tablename__ = "moves"
     __table_args__ = (
         Index(None, "player_id", "id", "is_winning_play"),  # create multicolumn index
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    roll_id: Mapped[int] = mapped_column(Integer, ForeignKey("rolls.id"), nullable=False)
+    roll_id: Mapped[int] = mapped_column(Integer, ForeignKey("roll.id"), nullable=False)
     game_id: Mapped[int] = mapped_column(String, nullable=False)
     roll_number: Mapped[int] = mapped_column(Integer, nullable=False)
     player_id: Mapped[int] = mapped_column(Integer, ForeignKey("player.id"), nullable=False)
     is_winning_play: Mapped[Boolean] = mapped_column(Boolean, default=False, nullable=False)
     created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now, index=True)
 
-    def to_json(self, roll: "Roll", player: "Player"):
+    def to_json(self, roll: Roll, player: Player):
         if self.roll_id != roll.id:
             raise Exception("Mismatched roll values")
         if self.player_id != player.id:

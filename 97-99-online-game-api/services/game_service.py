@@ -18,11 +18,11 @@ def get_game_history(game_id: str) -> List[Move]:
     """
     session = get_session()
     with session as session:
-        history = session.scalars(
+        history = session.execute(
             select(Move)
             .filter(Move.game_id == game_id)
             .order_by(Move.roll_number)
-        ).all()
+        ).scalars().all()
     return history
 
 
@@ -42,12 +42,12 @@ def get_win_count(player: Player) -> int:
     """
     session = get_session()
     with session as session:
-        wins = session.scalars(
+        wins = session.execute(
             select(func.count())
             .select_from(Move)
             .filter(Move.player_id == player.id)
             .filter(Move.is_winning_play)
-        ).one()
+        ).scalar()
     return wins
 
 
@@ -58,10 +58,10 @@ def find_player(name: str) -> Player:
     """
     session = get_session()
     with session as session:
-        player = session.scalars(
+        player = session.execute(
             select(Player).
             filter(Player.name == name)
-        ).first()
+        ).scalars().first()
     return player
 
 
@@ -80,10 +80,10 @@ def create_player(name: str) -> Player:
     session = get_session()
     with session as session, session.begin():
         session.add(player)
-        player = session.scalars(
-            select(Player).
-            filter(Player.name == name)
-        ).one()
+        # player = session.execute(
+        #     select(Player).
+        #     filter(Player.name == name)
+        # ).scalar()
 
     return player
 
@@ -95,9 +95,9 @@ def all_players() -> List[Player]:
     """
     session = get_session()
     with session as session:
-        players = session.scalars(
+        players = session.execute(
             select(Player)
-        ).all()
+        ).scalars().all()
     return players
 
 
@@ -128,10 +128,11 @@ def all_rolls() -> List[Roll]:
     :return List[Roll]
     """
     session = get_session()
-    with (session as session):
-        rolls = session.scalars(
+    with session as session:
+        rolls = session.execute(
             select(Roll)
-        ).all()
+        ).scalars().all()
+
     return rolls
 
 
@@ -144,7 +145,7 @@ def init_rolls(rolls: List[str]):
         roll_count = session.execute(
             select(func.count())
             .select_from(Roll)
-        )
+        ).scalar()
 
     if roll_count:
         return
@@ -160,10 +161,10 @@ def find_roll(name: str) -> Optional[Roll]:
     """
     session = get_session()
     with session as session:
-        roll = session.scalars(
+        roll = session.execute(
             select(Roll).
             filter(Roll.name == name)
-        ).first()
+        ).scalars().first()
     return roll
 
 
@@ -176,10 +177,10 @@ def create_roll(name: str) -> Roll:
     session = get_session()
     with session as session, session.begin():
         session.add(roll)
-        roll = session.scalars(
+        roll = session.execute(
             select(Roll).
             filter(Roll.id == roll.id)
-        ).first()
+        ).scalars().first()
     return roll
 
 
@@ -190,10 +191,10 @@ def find_roll_by_id(roll_id: int) -> Roll:
     """
     session = get_session()
     with session as session:
-        roll = session.scalars(
+        roll = session.execute(
             select(Roll)
             .filter(Roll.id == roll_id)
-        ).first()
+        ).scalars().first()
     return roll
 
 
@@ -204,10 +205,10 @@ def find_player_by_id(player_id: int) -> Player:
     """
     session = get_session()
     with session as session:
-        player = session.scalars(
+        player = session.execute(
             select(Player)
             .filter(Player.id == player_id)
-        ).first()
+        ).scalars().first()
     return player
 
 

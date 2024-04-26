@@ -19,3 +19,4 @@ class Player(ModelBase):
 
     def __repr__(self) -> str:
         return f"{type(self).__qualname__}(id={self.id!r}, name={self.name!r}, created={self.created!r})"
+

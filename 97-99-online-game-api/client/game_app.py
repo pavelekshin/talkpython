@@ -1,4 +1,7 @@
 import random
+import time
+
+from requests import HTTPError
 
 from api import GameService
 
@@ -15,8 +18,13 @@ def main():
 
     game_id = svc.create_game().get("game_id")
     rolls = svc.all_rolls()
-    # user = svc.create_user(user="Bob")
-    player = svc.find_user("Bob")
+
+    try:
+        player = svc.find_user("Bob")
+    except HTTPError as ex:
+        svc.create_user(user="Bob")
+        time.sleep(.5)
+        player = svc.find_user("Bob")
 
     is_over = False
     while not is_over:

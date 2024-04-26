@@ -6,9 +6,8 @@ from data.session_factory import db
 
 
 class Player(db.Model):
-    __tablename__ = "player"
     __table_args__ = (
-        Index(None, "id"),  # create index
+        Index(None, "id"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
