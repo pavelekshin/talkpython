@@ -2,10 +2,10 @@ import datetime
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import Integer, String, DateTime, Index
-from web.models.model_base import ModelBase
+from data.session_factory import db
 
 
-class Roll(ModelBase):
+class Roll(db.Model):
     __tablename__ = "rolls"
     __table_args__ = (
         Index(None, "id"),

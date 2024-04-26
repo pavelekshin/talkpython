@@ -1,8 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import MetaData
-
-# declarative base class
-# metadata_base = MetaData(schema='main')
 metadata_base = MetaData()
 
 naming_convention = {

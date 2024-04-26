@@ -2,12 +2,32 @@ import random
 import uuid
 
 import flask
-from web.game_logic import game_service
-from web.game_logic.game import GameRound
+from services import game_service
+from services.game import GameRound
 
 
 def build_views(app):
-    @app.route("/api/game/users/<user>", methods=["GET"])
+    @app.before_request
+    def log_request():
+        app.logger.info(
+            "path: %s | method: %s | body: %s",
+            flask.request.path,
+            flask.request.method,
+            flask.request.get_json() \
+                if flask.request.is_json \
+                else flask.request.data
+        )
+
+    @app.after_request
+    def log_response(response):
+        app.logger.info(
+            "status: %s | body: %s",
+            response.status,
+            response.get_data(as_text=True)
+        )
+        return response
+
+    @app.route("/api/game/users/<string:user>", methods=["GET"])
     def find_user(user: str):
         player = game_service.find_player(user)
         if not player:
@@ -41,7 +61,7 @@ def build_views(app):
         rolls = [r.name for r in game_service.all_rolls()]
         return flask.jsonify(rolls)
 
-    @app.route("/api/game/<game_id>/status", methods=["GET"])
+    @app.route("/api/game/<string:game_id>/status", methods=["GET"])
     def game_status(game_id: str):
         is_over = game_service.is_game_over(game_id)
         history = game_service.get_game_history(game_id)

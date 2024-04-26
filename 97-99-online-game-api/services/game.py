@@ -1,9 +1,9 @@
 from collections import defaultdict
 
-from web.game_logic import game_service, game_decider
-from web.game_logic.game_decider import Decision
-from web.models.player import Player
-from web.models.roll import Roll
+from services import game_service, game_decider
+from services.game_decider import Decision
+from models.player import Player
+from models.roll import Roll
 
 
 class GameOverException(Exception):
@@ -46,9 +46,13 @@ class GameRound:
         self.record_roll(d, self.player1, self.p1_roll, self.player1_wins)
         self.record_roll(d.reversed(), self.player2, self.p2_roll, self.player2_wins)
 
-        print("RECORDING ROUND")
-        print("Player 1: {}, prior wins {}, outcome: {}".format(self.p1_roll.name, self.player1_wins, d))
-        print("Player 2: {}, prior wins {}, outcome: {}".format(self.p2_roll.name, self.player2_wins, d.reversed()))
+        print(f"RECORDING ROUND {self.round}")
+        print("Player 1 = {}: {}, prior wins {}, outcome: {}".format(self.player1.name, self.p1_roll.name,
+                                                                     self.player1_wins,
+                                                                     d))
+        print("Player 2 = {}: {}, prior wins {}, outcome: {}".format(self.player2.name, self.p2_roll.name,
+                                                                     self.player2_wins,
+                                                                     d.reversed()))
         print()
 
         self.is_over = game_service.is_game_over(self.game_id)

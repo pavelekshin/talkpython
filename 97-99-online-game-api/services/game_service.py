@@ -3,12 +3,12 @@ from typing import List, Optional
 
 from sqlalchemy import select, func
 
-from web.data import session_factory
-from web.game_logic import game_decider
-from web.game_logic.game_decider import Decision
-from web.models.move import Move
-from web.models.player import Player
-from web.models.roll import Roll
+from data.session_factory import db, get_session
+from services import game_decider
+from services.game_decider import Decision
+from models.move import Move
+from models.player import Player
+from models.roll import Roll
 
 
 def get_game_history(game_id: str) -> List[Move]:
@@ -16,7 +16,7 @@ def get_game_history(game_id: str) -> List[Move]:
     Get game history by game_id
     :return List[Move]
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         history = session.scalars(
             select(Move)
@@ -40,7 +40,7 @@ def get_win_count(player: Player) -> int:
     Return win count for player
     :return int
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         wins = session.scalars(
             select(func.count())
@@ -56,7 +56,7 @@ def find_player(name: str) -> Player:
     Find player by name and return their object
     :return Player object
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         player = session.scalars(
             select(Player).
@@ -77,7 +77,7 @@ def create_player(name: str) -> Player:
     player = Player()
     player.name = name
 
-    session = session_factory.get_session()
+    session = get_session()
     with session as session, session.begin():
         session.add(player)
         player = session.scalars(
@@ -93,7 +93,7 @@ def all_players() -> List[Player]:
     Get list of players
     :return List[Player]
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         players = session.scalars(
             select(Player)
@@ -117,7 +117,7 @@ def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool,
     move.is_winning_play = is_winning_play
     move.roll_number = roll_num
 
-    session = session_factory.get_session()
+    session = get_session()
     with session as session, session.begin():
         session.add(move)
 
@@ -127,7 +127,7 @@ def all_rolls() -> List[Roll]:
     Get all rolls
     :return List[Roll]
     """
-    session = session_factory.get_session()
+    session = get_session()
     with (session as session):
         rolls = session.scalars(
             select(Roll)
@@ -139,9 +139,9 @@ def init_rolls(rolls: List[str]):
     """
     Init rolls
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
-        roll_count = session.scalars(
+        roll_count = session.execute(
             select(func.count())
             .select_from(Roll)
         )
@@ -158,7 +158,7 @@ def find_roll(name: str) -> Optional[Roll]:
     Find roll by their name
     :return Optional[Roll] object
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         roll = session.scalars(
             select(Roll).
@@ -173,7 +173,7 @@ def create_roll(name: str) -> Roll:
     """
     roll = Roll()
     roll.name = name
-    session = session_factory.get_session()
+    session = get_session()
     with session as session, session.begin():
         session.add(roll)
         roll = session.scalars(
@@ -188,7 +188,7 @@ def find_roll_by_id(roll_id: int) -> Roll:
     Find roll by roll_id and return found object
     :return Roll object
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         roll = session.scalars(
             select(Roll)
@@ -202,7 +202,7 @@ def find_player_by_id(player_id: int) -> Player:
     Find player by player_id and return found object
     :return Player object
     """
-    session = session_factory.get_session()
+    session = get_session()
     with session as session:
         player = session.scalars(
             select(Player)

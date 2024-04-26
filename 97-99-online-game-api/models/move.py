@@ -1,12 +1,12 @@
 import datetime
 
+from data.session_factory import db
 from sqlalchemy import Integer, String, Boolean, DateTime, ForeignKey, Index
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from web.models.model_base import ModelBase
 
 
-class Move(ModelBase):
+class Move(db.Model):
     __tablename__ = "moves"
     __table_args__ = (
         Index(None, "player_id", "id", "is_winning_play"),  # create multicolumn index
