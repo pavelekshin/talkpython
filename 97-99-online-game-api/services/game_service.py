@@ -16,8 +16,7 @@ def get_game_history(game_id: str) -> List[Move]:
     Get game history by game_id
     :param game_id
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         history = session.execute(
             select(Move)
             .filter(Move.game_id == game_id)
@@ -40,8 +39,7 @@ def get_win_count(player: Player) -> int:
     Return win count for player
     :param player
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         wins = session.execute(
             select(func.count())
             .select_from(Move)
@@ -77,11 +75,6 @@ def create_player(name: str) -> Player:
 
     with get_session() as session, session.begin():
         session.add(player)
-        # player = session.execute(
-        #     select(Player).
-        #     filter(Player.name == name)
-        # ).scalar()
-
     return player
 
 
@@ -124,7 +117,6 @@ def all_rolls() -> List[Roll]:
         rolls = session.execute(
             select(Roll)
         ).scalars().all()
-
     return rolls
 
 
@@ -168,10 +160,6 @@ def create_roll(name: str) -> Roll:
     roll.name = name
     with get_session() as session, session.begin():
         session.add(roll)
-        roll = session.execute(
-            select(Roll).
-            filter(Roll.id == roll.id)
-        ).scalars().first()
     return roll
 
 

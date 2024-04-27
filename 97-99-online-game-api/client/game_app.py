@@ -22,6 +22,7 @@ def main():
     try:
         player = svc.find_user("Bob")
     except HTTPError as ex:
+        print(ex, "\n")
         svc.create_user(user="Bob")
         time.sleep(.5)
         player = svc.find_user("Bob")
