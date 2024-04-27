@@ -5,6 +5,8 @@ import flask
 from flask import Flask, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
+from schema.validator import validate
+from schema.schema import PLAY_ROUND
 from services import game_service
 from services.game import GameRound
 from data.session_factory import db
@@ -57,10 +59,6 @@ def build_views(app: Flask):
 
     @app.route("/api/game/users", methods=["PUT"])
     def create_user():
-        if not flask.request.json \
-                or "user" not in flask.request.json \
-                or not flask.request.json.get("user"):
-            raise InvalidAPIUsage("Invalid request, user not provided!", 400)
 
         username = flask.request.json.get("user").strip()
         player = game_service.create_player(username)
@@ -115,6 +113,7 @@ def build_views(app: Flask):
         return jsonify(wins[:10])
 
     @app.route("/api/game/play_round", methods=["POST"])
+    @validate(PLAY_ROUND)
     def play_round():
         try:
             db_roll, db_user, game_id = validate_round_request()
@@ -138,16 +137,12 @@ def build_views(app: Flask):
         })
 
     def validate_round_request():
-        if not flask.request.json:
-            raise ValueError("No JSON body.")
-        if not (game_id := flask.request.json.get("game_id")):
-            raise ValueError("No game_id value")
-        if not (user := flask.request.json.get("user")):
-            raise ValueError("No user value")
+        game_id = flask.request.json.get("game_id")
+        user = flask.request.json.get("user")
+        roll = flask.request.json.get("roll")
+
         if not (db_user := game_service.find_player(user)):
             raise ValueError("No user with name {}".format(user))
-        if not (roll := flask.request.json.get("roll")):
-            raise ValueError("No roll value")
         if not (db_roll := game_service.find_roll(roll)):
             raise ValueError("No roll with name {}".format(roll))
         if is_over := game_service.is_game_over(game_id):

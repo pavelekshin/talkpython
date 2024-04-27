@@ -16,7 +16,7 @@ def init_db():
             "pool_size": 10,
             "pool_pre_ping": True,
         }
-    app.config["SQLALCHEMY_ECHO"] = True
+    app.config["SQLALCHEMY_ECHO"] = False
     db.init_app(app)
 
 
