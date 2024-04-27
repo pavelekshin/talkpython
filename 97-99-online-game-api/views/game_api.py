@@ -6,7 +6,7 @@ from flask import Flask, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from schema.validator import validate
-from schema.schema import PLAY_ROUND
+from schema.schema import PLAY_ROUND, CREATE_USER
 from services import game_service
 from services.game import GameRound
 from data.session_factory import db
@@ -58,6 +58,7 @@ def build_views(app: Flask):
         return jsonify(player.to_json())
 
     @app.route("/api/game/users", methods=["PUT"])
+    @validate(CREATE_USER)
     def create_user():
 
         username = flask.request.json.get("user").strip()
