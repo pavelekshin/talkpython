@@ -21,6 +21,7 @@ PLAY_ROUND = {
             "game_id": {
                 "type": "string",
                 "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
+                # UUID4 regex pattern
             },
             "user": {
                 "type": "string",
