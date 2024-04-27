@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from services import game_service
 from services.game import GameRound
 from data.session_factory import db
-from models.Exceptions import InvalidAPIUsage
+from models.exceptions import InvalidAPIUsage
 
 
 def build_views(app: Flask):
