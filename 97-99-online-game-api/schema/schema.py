@@ -1,10 +1,10 @@
 # {"user": "Bob"}
 CREATE_USER = {
     "type": "object",
-    "required": ["name", ],
+    "required": ["user", ],
     "properties":
         {
-            "name": {
+            "user": {
                 "type": "string",
                 "minLength": 3,
                 "maxLength": 10
