@@ -1,6 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import MetaData
-metadata_base = MetaData()
 
 naming_convention = {
     "ix": "ix_%(column_0_label)s",
@@ -12,6 +11,5 @@ naming_convention = {
 
 
 class ModelBase(DeclarativeBase):
-    metadata = metadata_base
+    metadata = MetaData()
     metadata.naming_convention = naming_convention
-    pass
