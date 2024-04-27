@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from sqlalchemy import select, func
 
-from data.session_factory import db, get_session
+from data.session_factory import get_session
 from services import game_decider
 from services.game_decider import Decision
 from models.move import Move
@@ -14,7 +14,7 @@ from models.roll import Roll
 def get_game_history(game_id: str) -> List[Move]:
     """
     Get game history by game_id
-    :return List[Move]
+    :param game_id
     """
     session = get_session()
     with session as session:
@@ -29,7 +29,7 @@ def get_game_history(game_id: str) -> List[Move]:
 def is_game_over(game_id: str) -> bool:
     """
     Check if game_id have win flag
-    :return True/False
+    :param game_id
     """
     history = get_game_history(game_id)
     return any([h.is_winning_play for h in history])
@@ -38,7 +38,7 @@ def is_game_over(game_id: str) -> bool:
 def get_win_count(player: Player) -> int:
     """
     Return win count for player
-    :return int
+    :param player
     """
     session = get_session()
     with session as session:
@@ -53,11 +53,10 @@ def get_win_count(player: Player) -> int:
 
 def find_player(name: str) -> Player:
     """
-    Find player by name and return their object
-    :return Player object
+    Find player by their name and return their object
+    :param name - name of flayer
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         player = session.execute(
             select(Player).
             filter(Player.name == name)
@@ -68,7 +67,6 @@ def find_player(name: str) -> Player:
 def create_player(name: str) -> Player:
     """
     Create player object
-    :return Player object
     """
     player = find_player(name)
     if player:
@@ -77,8 +75,7 @@ def create_player(name: str) -> Player:
     player = Player()
     player.name = name
 
-    session = get_session()
-    with session as session, session.begin():
+    with get_session() as session, session.begin():
         session.add(player)
         # player = session.execute(
         #     select(Player).
@@ -91,10 +88,8 @@ def create_player(name: str) -> Player:
 def all_players() -> List[Player]:
     """
     Get list of players
-    :return List[Player]
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         players = session.execute(
             select(Player)
         ).scalars().all()
@@ -104,11 +99,11 @@ def all_players() -> List[Player]:
 def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int):
     """
     Record roll into DB table
-    :player - Player object
-    :roll - Roll object
-    :game_id - str
-    :is_winning_play - bool
-    :roll_num - int
+    :param player
+    :param roll
+    :param game_id
+    :param is_winning_play
+    :param roll_num
     """
     move = Move()
     move.player_id = player.id
@@ -117,18 +112,15 @@ def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool,
     move.is_winning_play = is_winning_play
     move.roll_number = roll_num
 
-    session = get_session()
-    with session as session, session.begin():
+    with get_session() as session, session.begin():
         session.add(move)
 
 
 def all_rolls() -> List[Roll]:
     """
     Get all rolls
-    :return List[Roll]
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         rolls = session.execute(
             select(Roll)
         ).scalars().all()
@@ -139,9 +131,9 @@ def all_rolls() -> List[Roll]:
 def init_rolls(rolls: List[str]):
     """
     Init rolls
+    :param rolls - list of rolls name
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         roll_count = session.execute(
             select(func.count())
             .select_from(Roll)
@@ -157,10 +149,9 @@ def init_rolls(rolls: List[str]):
 def find_roll(name: str) -> Optional[Roll]:
     """
     Find roll by their name
-    :return Optional[Roll] object
+    :param name - roll name
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         roll = session.execute(
             select(Roll).
             filter(Roll.name == name)
@@ -171,11 +162,11 @@ def find_roll(name: str) -> Optional[Roll]:
 def create_roll(name: str) -> Roll:
     """
     Save roll in DB table
+    :param name - roll name
     """
     roll = Roll()
     roll.name = name
-    session = get_session()
-    with session as session, session.begin():
+    with get_session() as session, session.begin():
         session.add(roll)
         roll = session.execute(
             select(Roll).
@@ -187,10 +178,9 @@ def create_roll(name: str) -> Roll:
 def find_roll_by_id(roll_id: int) -> Roll:
     """
     Find roll by roll_id and return found object
-    :return Roll object
+    :param roll_id - roll_id
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         roll = session.execute(
             select(Roll)
             .filter(Roll.id == roll_id)
@@ -201,10 +191,9 @@ def find_roll_by_id(roll_id: int) -> Roll:
 def find_player_by_id(player_id: int) -> Player:
     """
     Find player by player_id and return found object
-    :return Player object
+    :param player_id - player_id
     """
-    session = get_session()
-    with session as session:
+    with get_session() as session:
         player = session.execute(
             select(Player)
             .filter(Player.id == player_id)
@@ -214,8 +203,9 @@ def find_player_by_id(player_id: int) -> Player:
 
 def count_round_wins(player_id: int, game_id: str) -> int:
     """
-    Check round score
-    :return wins - int
+    Check round score and return wins count
+    :param player_id - player_id
+    :param game_id - game_id
     """
     history = get_game_history(game_id)
     wins = 0

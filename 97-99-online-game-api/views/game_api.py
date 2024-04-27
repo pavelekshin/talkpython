@@ -2,14 +2,16 @@ import random
 import uuid
 
 import flask
+from flask import Flask, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
 from services import game_service
 from services.game import GameRound
 from data.session_factory import db
+from models.Exceptions import InvalidAPIUsage
 
 
-def build_views(app: flask.Flask):
+def build_views(app: Flask):
     @app.before_request
     def log_request():
         app.logger.info(
@@ -31,50 +33,48 @@ def build_views(app: flask.Flask):
         )
         return response
 
-    @app.teardown_request
-    def teardown_request(ex):
-        if ex:
-            app.logger.error(f"Error: {ex}")
-        db.session.remove()
+    # @app.teardown_request  # Same thing doing automatically by flask_sqlalchemy
+    # def teardown_request(ex):
+    #     if ex:
+    #         app.logger.error(f"Error: {ex}")
+    #     db.session.remove()
 
     @app.errorhandler(SQLAlchemyError)
     def handle_db_exceptions(ex):
         app.logger.error(f"Error: {ex}")
         db.session.rollback()
 
+    @app.errorhandler(InvalidAPIUsage)
+    def handle_invalid_api_usage(ex):
+        return jsonify(ex.to_dict()), ex.status_code
+
     @app.route("/api/game/users/<string:user>", methods=["GET"])
     def find_user(user: str):
         player = game_service.find_player(user)
         if not player:
-            flask.abort(404)
-        return flask.jsonify(player.to_json())
+            raise InvalidAPIUsage("User was not found!", status_code=404)
+        return jsonify(player.to_json())
 
     @app.route("/api/game/users", methods=["PUT"])
     def create_user():
-        try:
-            if not flask.request.json \
-                    or "user" not in flask.request.json \
-                    or not flask.request.json.get("user"):
-                raise ValueError("No value for user.")
-
-        except ValueError as ex:
-            flask.abort(flask.Response(response="Invalid request: {}".format(ex),
-                                       status=400
-                                       ))
+        if not flask.request.json \
+                or "user" not in flask.request.json \
+                or not flask.request.json.get("user"):
+            raise InvalidAPIUsage("Invalid request, user not provided!", 400)
 
         username = flask.request.json.get("user").strip()
         player = game_service.create_player(username)
 
-        return flask.jsonify(player.to_json())
+        return jsonify(player.to_json())
 
     @app.route("/api/game/games", methods=["POST"])
     def create_game():
-        return flask.jsonify({"game_id": str(uuid.uuid4())})
+        return jsonify({"game_id": str(uuid.uuid4())})
 
     @app.route("/api/game/rolls", methods=["GET"])
     def all_rolls():
         rolls = [r.name for r in game_service.all_rolls()]
-        return flask.jsonify(rolls)
+        return jsonify(rolls)
 
     @app.route("/api/game/<string:game_id>/status", methods=["GET"])
     def game_status(game_id: str):
@@ -82,7 +82,7 @@ def build_views(app: flask.Flask):
         history = game_service.get_game_history(game_id)
 
         if not history:
-            flask.abort(404)
+            raise InvalidAPIUsage(f"History for game_id: {game_id} was not found!", status_code=404)
 
         roll_lookup = {r.id: r for r in game_service.all_rolls()}
         player_lookup = {p.id: p for p in game_service.all_players()}
@@ -101,7 +101,7 @@ def build_views(app: flask.Flask):
             "winner": player1.to_json() if wins_p1 >= wins_p2 else player2.to_json()
         }
 
-        return flask.jsonify(data)
+        return jsonify(data)
 
     @app.route("/api/game/top_scores", methods=["GET"])
     def top_scores():
@@ -112,21 +112,22 @@ def build_views(app: flask.Flask):
         ]
 
         wins.sort(key=lambda wn: -wn.get("score"))
-        return flask.jsonify(wins[:10])
+        return jsonify(wins[:10])
 
     @app.route("/api/game/play_round", methods=["POST"])
     def play_round():
         try:
             db_roll, db_user, game_id = validate_round_request()
         except ValueError as ex:
-            flask.abort(flask.Response(response="Invalid request: {}".format(ex), status=400))
+            raise InvalidAPIUsage("Invalid request: {}".format(ex), status_code=400)
 
         computer_player = game_service.find_player("computer")
         computer_roll = random.choice(game_service.all_rolls())
 
         game = GameRound(game_id, db_user, computer_player, db_roll, computer_roll)
         game.play()
-        return flask.jsonify({
+
+        return jsonify({
             "roll": db_roll.to_json(),
             "computer_roll": computer_roll.to_json(),
             "player": db_user.to_json(),

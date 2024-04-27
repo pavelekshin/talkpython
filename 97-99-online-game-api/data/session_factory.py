@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from db import db_folder
 from models.model_base import ModelBase
 
-db = SQLAlchemy(model_class=ModelBase,
-                session_options={"expire_on_commit": False}
-                )
+db = SQLAlchemy(
+    model_class=ModelBase,
+    session_options={"expire_on_commit": False}
+)
 
 
 def db_filename(name):
@@ -17,16 +18,13 @@ def db_filename(name):
 
 @contextmanager
 def get_session() -> Session:
-    session = db.session()
-
     try:
-        yield session
-        session.commit()
+        yield db.session()
     except SQLAlchemyError as err:
-        session.rollback()
+        db.session.rollback()
         print(f"Oops! {err}")
     except OperationalError as err:
-        session.rollback()
+        db.session.rollback()
         print(f"Oops! {err}")
     else:
-        session.close()
+        db.session.commit()

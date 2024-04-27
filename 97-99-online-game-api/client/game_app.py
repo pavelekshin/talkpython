@@ -39,7 +39,7 @@ def main():
         print("")
 
     game_status = svc.game_status(game_id)
-    print("Game is over, outcome: Winner: {}".format(game_status.get("winner").get("name")))
+    print("Game is over, winner: {}".format(game_status.get("winner").get("name")))
 
 
 if __name__ == "__main__":

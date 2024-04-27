@@ -47,14 +47,15 @@ class GameRound:
         self.record_roll(d.reversed(), self.player2, self.p2_roll, self.player2_wins)
 
         print(f"RECORDING ROUND {self.round}")
-        print("Player 1: {}: {}, prior wins {}, outcome: {}".format(self.player1.name, self.p1_roll.name,
-                                                                    self.player1_wins,
-                                                                    d))
-        print("Player 2: {}: {}, prior wins {}, outcome: {}".format(self.player2.name, self.p2_roll.name,
-                                                                    self.player2_wins,
-                                                                    d.reversed()))
+        print("Player 1: {}: {}, prior score {}, outcome: {}".format(self.player1.name, self.p1_roll.name,
+                                                                     self.player1_wins,
+                                                                     d))
+        print("Player 2: {}: {}, prior score {}, outcome: {}".format(self.player2.name, self.p2_roll.name,
+                                                                     self.player2_wins,
+                                                                     d.reversed()))
         print(
-            "Score Player 1: {} : {}, Player 2: {} : {}".format(self.player1.name, self.player1_wins, self.player2.name,
+            "Score Player 1: {} : {}, Player 2: {} : {}".format(self.player1.name, self.player1_wins,
+                                                                self.player2.name,
                                                                 self.player2_wins))
         print()
 
