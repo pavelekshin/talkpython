@@ -18,6 +18,7 @@ def main():
 
     game_id = svc.create_game().get("game_id")
     rolls = svc.all_rolls()
+    print(rolls)
 
     try:
         player = svc.find_user("Bob")

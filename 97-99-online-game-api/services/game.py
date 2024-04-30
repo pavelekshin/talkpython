@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from services import game_service, game_decider
-from services.game_decider import Decision
 from models.player import Player
 from models.roll import Roll
 
@@ -61,9 +60,9 @@ class GameRound:
 
         self.is_over = game_service.is_game_over(self.game_id)
 
-    def record_roll(self, decision: Decision, player: Player, roll: Roll, win_count: int):
+    def record_roll(self, decision: game_decider.Decision, player: Player, roll: Roll, win_count: int):
         final_round_candidate = self.round >= self.PLAY_COUNT_MIN and win_count + 1 >= self.WIN_COUNT_MIN
-        wins_game = final_round_candidate and decision == Decision.win
+        wins_game = final_round_candidate and decision == game_decider.Decision.win
 
         game_service.record_roll(player, roll, self.game_id, wins_game, self.round)
 
@@ -85,7 +84,7 @@ class GameRound:
             player_roll = game_service.find_roll_by_id(player_move.roll_id)
             opponent_roll = game_service.find_roll_by_id(opponent_move.roll_id)
 
-            if game_decider.decide(player_roll, opponent_roll) == Decision.win:
+            if game_decider.decide(player_roll, opponent_roll) == game_decider.Decision.win:
                 win_count += 1
 
         return win_count

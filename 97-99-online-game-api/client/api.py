@@ -18,8 +18,8 @@ class GameService(uplink.Consumer):
     def create_user(self, **kwargs: uplink.Body):
         pass
 
-    @uplink.post("/api/game/games")
-    def create_game(self, **kwargs: uplink.Body):
+    @uplink.get("/api/game/games")
+    def create_game(self):
         pass
 
     @uplink.get("/api/game/rolls")

@@ -1,26 +1,26 @@
-import os
-
-import flask
+from flask import Flask
+from config.config import ProductionConfig
 from services import game_service, game_decider
-from data.session_factory import db_filename, db
-from views import game_api, home
-
-app = flask.Flask(__name__)
+from views import home, game_api
 
 
-def init_db():
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI") \
-                                            or "sqlite:///" + db_filename(name="rock_paper_scissors.sqlite")
-    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = \
-        {
-            "pool_size": 10,
-            "pool_pre_ping": True,
-        }
-    app.config["SQLALCHEMY_ECHO"] = False
-    db.init_app(app)
+def create_app(config=None):
+    app = Flask(__name__)
+
+    if config is None:
+        app.config.from_object(ProductionConfig(name="rock_paper_scissors.sqlite"))
+    else:
+        app.config.from_object(config)
+    with app.app_context():
+        from data.session_factory import db
+        db.init_app(app)
+        db.create_all()
+        build_views(app)
+        build_starter_data()
+    return app
 
 
-def build_views():
+def build_views(app: Flask):
     game_api.build_views(app)
     home.build_views(app)
 
@@ -34,9 +34,5 @@ def build_starter_data():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        init_db()
-        db.create_all()
-        build_views()
-        build_starter_data()
-    app.run(debug=True)
+    flaskapp = create_app()
+    flaskapp.run(debug=False)

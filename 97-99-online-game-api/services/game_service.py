@@ -5,7 +5,6 @@ from sqlalchemy import select, func
 
 from data.session_factory import get_session
 from services import game_decider
-from services.game_decider import Decision
 from models.move import Move
 from models.player import Player
 from models.roll import Roll
@@ -211,7 +210,7 @@ def count_round_wins(player_id: int, game_id: str) -> int:
         opponent_roll = find_roll_by_id(opponent_move.roll_id)
 
         outcome = game_decider.decide(player_roll, opponent_roll)
-        if outcome == Decision.win:
+        if outcome == game_decider.Decision.win:
             wins += 1
 
     return wins

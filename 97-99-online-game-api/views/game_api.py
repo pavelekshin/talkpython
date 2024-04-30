@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from schema.validator import validate
 from schema.schema import PLAY_ROUND, CREATE_USER
-from services import game_service
+from services import game_spwdervice
 from services.game import GameRound
 from data.session_factory import db
 from models.exceptions import InvalidAPIUsage
@@ -66,7 +66,7 @@ def build_views(app: Flask):
 
         return jsonify(player.to_json())
 
-    @app.route("/api/game/games", methods=["POST"])
+    @app.route("/api/game/games", methods=["GET"])
     def create_game():
         return jsonify({"game_id": str(uuid.uuid4())})
 
