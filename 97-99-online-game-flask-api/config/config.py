@@ -3,6 +3,7 @@ from db.db_folder import get_db_path
 
 class Config(object):
     """Base config, uses staging database server."""
+    __test__ = False
     TESTING = False
     DB_SERVER = "localhost"
     ECHO = False
