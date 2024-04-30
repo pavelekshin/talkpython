@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from schema.validator import validate
 from schema.schema import PLAY_ROUND, CREATE_USER
-from services import game_spwdervice
+from services import game_service
 from services.game import GameRound
 from data.session_factory import db
 from models.exceptions import InvalidAPIUsage
