@@ -137,3 +137,6 @@ dmypy.json
 
 #VIM
 *.un~
+
+#exclude Plotly HTML graphs
+*/ploly_html/*.html

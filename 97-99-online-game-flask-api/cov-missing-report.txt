@@ -1,0 +1,40 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.13, pytest-8.2.0, pluggy-1.5.0
+rootdir: /home/pve/repos/talkpython/97-99-online-game-api
+plugins: cov-5.0.0
+collected 10 items
+
+tests/test_client.py ..........                                          [100%]
+
+=============================== warnings summary ===============================
+config/config.py:50
+  /home/pve/repos/talkpython/97-99-online-game-api/config/config.py:50: PytestCollectionWarning: cannot collect test class 'TestingConfig' because it has a __init__ constructor (from: tests/test_client.py)
+    class TestingConfig(Config):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform linux, python 3.10.13-final-0 ----------
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+app.py                        27      3    89%   11, 37-38
+config/config.py              34      2    94%   20, 34
+data/session_factory.py       17      6    65%   18-23
+db/db_folder.py                4      0   100%
+models/exceptions.py          12      0   100%
+models/model_base.py           6      0   100%
+models/move.py                24      3    88%   27, 29, 43
+models/player.py              14      1    93%   25
+models/roll.py                14      1    93%   25
+schema/schema.py               2      0   100%
+schema/validator.py           17      4    76%   20-25
+services/game.py              54      2    96%   40, 79
+services/game_decider.py      52      1    98%   31
+services/game_service.py      89      2    98%   70, 134
+tests/__init__.py              0      0   100%
+tests/test_client.py         101      3    97%   31-33
+views/game_api.py             88      8    91%   46-47, 84, 121-122, 146, 148, 150
+views/home.py                  8      0   100%
+--------------------------------------------------------
+TOTAL                        563     36    94%
+
+======================== 10 passed, 1 warning in 0.92s =========================
