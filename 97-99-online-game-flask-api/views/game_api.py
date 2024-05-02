@@ -26,7 +26,7 @@ def build_views(app: Flask):
         )
 
     @app.after_request
-    def log_response(response):
+    def log_response(response: flask.Response):
         app.logger.info(
             "status: {} | body: {}".format(
                 response.status,
@@ -34,12 +34,6 @@ def build_views(app: Flask):
             )
         )
         return response
-
-    # @app.teardown_request  # Same thing doing automatically by flask_sqlalchemy
-    # def teardown_request(ex):
-    #     if ex:
-    #         app.logger.error(f"Error: {ex}")
-    #     db.session.remove()
 
     @app.errorhandler(SQLAlchemyError)
     def handle_db_exceptions(ex):

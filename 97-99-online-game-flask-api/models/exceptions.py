@@ -1,3 +1,6 @@
+from werkzeug.exceptions import HTTPException
+
+
 class InvalidAPIUsage(Exception):
     status_code = 400
 
@@ -9,6 +12,6 @@ class InvalidAPIUsage(Exception):
         self.payload = payload
 
     def to_dict(self):
-        rv = dict(self.payload or ())
-        rv["message"] = self.message
-        return rv
+        body = dict(self.payload or ())
+        body["message"] = self.message
+        return body

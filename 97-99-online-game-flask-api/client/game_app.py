@@ -20,6 +20,7 @@ def main():
     rolls = svc.all_rolls()
     print(rolls)
 
+
     try:
         player = svc.find_user("Bob")
     except HTTPError as ex:

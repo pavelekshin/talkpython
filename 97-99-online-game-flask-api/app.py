@@ -34,5 +34,5 @@ def build_starter_data():
 
 
 if __name__ == "__main__":
-    flaskapp = create_app()
-    flaskapp.run(debug=False)
+    app = create_app()
+    app.run(debug=True)
