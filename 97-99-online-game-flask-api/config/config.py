@@ -1,57 +1,60 @@
 from db.db_folder import get_db_path
 
 
-class Config(object):
+class Config:
     """Base config, uses staging database server."""
     __test__ = False
     TESTING = False
     DB_SERVER = "localhost"
+    DB_USER = None
+    DB_PASSWORD = None
+    DB_NAME = None
     ECHO = False
     DEBUG = False
-
-    def __init__(self, name="rock_paper_scissor.sqlite"):
-        if name:
-            self._name = name
+    ENGINE_OPTIONS = {
+        "pool_size": 10,
+        "pool_pre_ping": True,
+    }
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        if self.DB_SERVER == "localhost":
-            return f"sqlite:///{get_db_path(self._name)}"
-        else:
-            raise NotImplementedError("Not implemented")
+        raise NotImplementedError("Not implemented")
 
     @property
     def SQLALCHEMY_ENGINE_OPTIONS(self):
-        return {
-            "pool_size": 10,
-            "pool_pre_ping": True,
-        }
+        return self.ENGINE_OPTIONS
 
     @property
     def SQLALCHEMY_ECHO(self):
         return self.ECHO
 
-    def _db_filename(self):
-        return get_db_path(self._name)
-
 
 class ProductionConfig(Config):
     """Uses production database server."""
-    DB_SERVER = "localhost"
+    pass
 
 
 class DevelopmentConfig(Config):
     """Uses development database server."""
-    DB_SERVER = "localhost"
     TESTING = True
-    ECHO = True
+    ECHO = False
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///"
+
+    def __init__(self, db_name=None):
+        if db_name is None:
+            raise AttributeError("Database name not provided!")
+        self.db_name = db_name
+        self.SQLALCHEMY_DATABASE_URI += str(self._db_filename())
+
+    def _db_filename(self):
+        return get_db_path(self.db_name)
 
 
 class TestingConfig(Config):
     """Uses testing server."""
-    DB_SERVER = "localhost"
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///:memory:"
     TESTING = True
     ECHO = False
     DEBUG = True
+    ENGINE_OPTIONS = {}

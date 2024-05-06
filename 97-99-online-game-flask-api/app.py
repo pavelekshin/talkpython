@@ -1,5 +1,5 @@
 from flask import Flask
-from config.config import ProductionConfig
+from config.config import DevelopmentConfig
 from services import game_service, game_decider
 from views import home, game_api
 
@@ -8,7 +8,7 @@ def create_app(config=None):
     app = Flask(__name__)
 
     if config is None:
-        app.config.from_object(ProductionConfig(name="rock_paper_scissors.sqlite"))
+        app.config.from_object(DevelopmentConfig(db_name="rock_paper_scissors.sqlite"))
     else:
         app.config.from_object(config)
     with app.app_context():

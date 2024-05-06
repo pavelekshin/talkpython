@@ -6,7 +6,7 @@ import pytest
 import time
 
 from app import create_app
-from config.config import TestingConfig
+from config.config import TestingConfig, DevelopmentConfig
 from db.db_folder import get_db_path
 
 BASE_URL = "http://127.0.0.1:5000"
@@ -20,17 +20,18 @@ ROLLS = ['Rock', 'Gun', 'Lightning', 'Devil', 'Dragon', 'Water', 'Air', 'Paper',
 
 @pytest.fixture(scope="session")
 def app():
-    cfg = TestingConfig(name="test_rock_paper_scissors.sqlite")
+    cfg = TestingConfig()
     app = create_app(config=cfg)
     # other setup can go here
     yield app
     # clean up / reset resources here
     app.run = False
-    try:
-        os.remove(get_db_path("test_rock_paper_scissors.sqlite"))
-    except OSError as ex:
-        print(f"Oops: {ex}")
-        pass
+    if cfg.__dict__.get("db_name") is not None:
+        try:
+            os.remove(get_db_path(cfg.__dict__.get("db_name")))
+        except OSError as ex:
+            print(f"Oops: {ex}")
+            pass
 
 
 @pytest.fixture()
