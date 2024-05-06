@@ -26,7 +26,7 @@ def app():
     yield app
     # clean up / reset resources here
     app.run = False
-    if getattr(cfg, "db_name", None) is not None:
+    if hasattr(cfg, "db_name"):
         try:
             os.remove(getattr(cfg, "db_name"))
         except OSError as ex:
