@@ -7,7 +7,6 @@ import time
 
 from app import create_app
 from config.config import TestingConfig, DevelopmentConfig
-from db.db_folder import get_db_path
 
 BASE_URL = "http://127.0.0.1:5000"
 BAD_URL = "{}/api/v2/game/status".format(BASE_URL)
@@ -49,7 +48,10 @@ def time_footer():
 
 
 @pytest.mark.parametrize(
-    "url", [f"{BASE_URL}/"]
+    "url",
+    [
+        f"{BASE_URL}/"
+    ]
 )
 def test_home_page(client, url):
     req = client.get(url)
