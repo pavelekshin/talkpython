@@ -26,9 +26,9 @@ def app():
     yield app
     # clean up / reset resources here
     app.run = False
-    if cfg.__dict__.get("db_name") is not None:
+    if getattr(cfg, "db_name", None) is not None:
         try:
-            os.remove(get_db_path(cfg.__dict__.get("db_name")))
+            os.remove(getattr(cfg, "db_name"))
         except OSError as ex:
             print(f"Oops: {ex}")
             pass
