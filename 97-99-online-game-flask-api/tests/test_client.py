@@ -31,7 +31,6 @@ def app():
             os.remove(getattr(cfg, "db_name"))
         except OSError as ex:
             print(f"Oops: {ex}")
-            pass
 
 
 @pytest.fixture()
@@ -40,7 +39,7 @@ def client(app):
 
 
 @pytest.fixture(autouse=True)
-def footer():
+def time_footer():
     start = time.time()
     yield
     stop = time.time()
@@ -81,7 +80,9 @@ def test_find_nonexistent_user(client, url):
     [
         (
                 f"{BASE_URL}/api/game/users",
-                {"user": USERNAME},
+                {
+                    "user": USERNAME
+                },
                 "application/json",
         )
     ]
