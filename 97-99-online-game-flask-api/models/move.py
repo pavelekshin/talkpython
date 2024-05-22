@@ -3,9 +3,9 @@ import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from data.session_factory import db
 from models.player import Player
 from models.roll import Roll
+from session_factory import db
 
 
 class Move(db.Model):

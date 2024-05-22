@@ -1,7 +1,7 @@
 from db.db_folder import get_db_path
 
 
-class Config:
+class SQLAlchemyConfig:
     """Base config, uses staging database server."""
 
     __test__ = False
@@ -30,13 +30,7 @@ class Config:
         return self.ECHO
 
 
-class ProductionConfig(Config):
-    """Uses production database server."""
-
-    pass
-
-
-class DevelopmentConfig(Config):
+class DevelopmentConfig(SQLAlchemyConfig):
     """Uses development database server."""
 
     TESTING = True
@@ -54,7 +48,7 @@ class DevelopmentConfig(Config):
         return get_db_path(self.db_name)
 
 
-class TestingConfig(Config):
+class TestingConfig(SQLAlchemyConfig):
     """Uses testing server."""
 
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"

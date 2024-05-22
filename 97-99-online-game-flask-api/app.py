@@ -1,6 +1,8 @@
 from flask import Flask
 
 from config.config import DevelopmentConfig
+from error_handlers import build_error_handlers
+from helper_handlers import build_before_after_request_handlers
 from services import game_decider, game_service
 from views import game_api, home
 
@@ -13,7 +15,7 @@ def create_app(config=None):
     else:
         app.config.from_object(config)
     with app.app_context():
-        from data.session_factory import db
+        from session_factory import db
 
         db.init_app(app)
         db.create_all()
@@ -25,6 +27,8 @@ def create_app(config=None):
 def build_views(app: Flask):
     game_api.build_views(app)
     home.build_views(app)
+    build_error_handlers(app)
+    build_before_after_request_handlers(app)
 
 
 def build_starter_data():

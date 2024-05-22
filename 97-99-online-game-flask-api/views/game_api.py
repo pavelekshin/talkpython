@@ -2,11 +2,9 @@ import random
 import uuid
 
 import flask
-from flask import Flask, jsonify
-from sqlalchemy.exc import SQLAlchemyError
+from flask import Flask, jsonify, request
 
-from data.session_factory import db
-from models.exceptions import InvalidAPIUsageError
+from exceptions import InvalidAPIUsageError
 from schema.schema import CREATE_USER, PLAY_ROUND
 from schema.validator import validate
 from services import game_service
@@ -14,35 +12,6 @@ from services.game import GameRound
 
 
 def build_views(app: Flask):  # noqa
-    @app.before_request
-    def log_request():
-        app.logger.info(
-            "path: {} | method: {} | body: {}".format(
-                flask.request.path,
-                flask.request.method,
-                flask.request.get_json()
-                if flask.request.is_json
-                else flask.request.data,
-            )
-        )
-
-    @app.after_request
-    def log_response(response: flask.Response):
-        app.logger.info(
-            "status: {} | body: {}".format(
-                response.status, response.get_data(as_text=True)
-            )
-        )
-        return response
-
-    @app.errorhandler(SQLAlchemyError)
-    def handle_db_exceptions(ex):
-        app.logger.error(f"Error: {ex}")
-        db.session.rollback()
-
-    @app.errorhandler(InvalidAPIUsageError)
-    def handle_invalid_api_usage(ex):
-        return jsonify(ex.to_dict()), ex.status_code
 
     @app.route("/api/game/users/<string:user>", methods=["GET"])
     def find_user(user: str):
@@ -115,7 +84,7 @@ def build_views(app: Flask):  # noqa
     @validate(PLAY_ROUND)
     def play_round():
         try:
-            db_roll, db_user, game_id = validate_round_request()
+            db_roll, db_user, game_id = game_service.validate_round_request(request)
         except ValueError as ex:
             raise InvalidAPIUsageError(
                 "Invalid request: {}".format(ex), status_code=400
@@ -138,17 +107,3 @@ def build_views(app: Flask):  # noqa
                 "round_number": game.round,
             }
         )
-
-    def validate_round_request():
-        game_id = flask.request.json.get("game_id")
-        user = flask.request.json.get("user")
-        roll = flask.request.json.get("roll")
-
-        if not (db_user := game_service.find_player(user)):
-            raise ValueError("No user with name {}".format(user))
-        if not (db_roll := game_service.find_roll(roll)):
-            raise ValueError("No roll with name {}".format(roll))
-        if game_service.is_game_over(game_id):
-            raise ValueError("This game is already over.")
-
-        return db_roll, db_user, game_id

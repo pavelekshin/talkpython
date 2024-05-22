@@ -1,13 +1,14 @@
 from collections import defaultdict
 from typing import List, Optional
 
+from requests import Request
 from sqlalchemy import func, select
 
-from data.session_factory import get_session
 from models.move import Move
 from models.player import Player
 from models.roll import Roll
 from services import game_decider
+from session_factory import get_session
 
 
 def get_game_history(game_id: str) -> List[Move]:
@@ -90,7 +91,7 @@ def all_players() -> List[Player]:
 
 
 def record_roll(
-    player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int
+        player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int
 ):
     """
     Record roll into DB table
@@ -209,3 +210,18 @@ def count_round_wins(player_id: int, game_id: str) -> int:
             wins += 1
 
     return wins
+
+
+def validate_round_request(request: Request):
+    game_id = request.json.get("game_id")
+    user = request.json.get("user")
+    roll = request.json.get("roll")
+
+    if not (db_user := find_player(user)):
+        raise ValueError("No user with name {}".format(user))
+    if not (db_roll := find_roll(roll)):
+        raise ValueError("No roll with name {}".format(roll))
+    if is_game_over(game_id):
+        raise ValueError("This game is already over.")
+
+    return db_roll, db_user, game_id

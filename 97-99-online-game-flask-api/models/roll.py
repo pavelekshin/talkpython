@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import DateTime, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from data.session_factory import db
+from session_factory import db
 
 
 class Roll(db.Model):
