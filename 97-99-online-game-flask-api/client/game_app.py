@@ -1,9 +1,8 @@
 import random
 import time
 
-from requests import HTTPError
-
 from api import GameService
+from requests import HTTPError
 
 
 def main():
@@ -25,7 +24,7 @@ def main():
     except HTTPError as ex:
         print(ex, "\n")
         svc.create_user(user="Bob")
-        time.sleep(.5)
+        time.sleep(0.5)
         player = svc.find_user("Bob")
 
     is_over = False
@@ -36,7 +35,11 @@ def main():
         is_over = rnd.get("is_final_round")
         print("Round {}".format(rnd.get("round_number")))
         print("{} rolls {}".format(name, roll))
-        print("{} rolls {}".format(rnd.get("opponent").get("name"), rnd.get("computer_roll").get("name")))
+        print(
+            "{} rolls {}".format(
+                rnd.get("opponent").get("name"), rnd.get("computer_roll").get("name")
+            )
+        )
         print("Resulting in {}".format(rnd.get("round_outcome")))
         print("")
 

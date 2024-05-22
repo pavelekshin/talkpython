@@ -1,7 +1,7 @@
 import functools
 
-from flask import jsonify, request, make_response
 import jsonschema
+from flask import jsonify, make_response, request
 
 
 def validate(req_schema):
@@ -14,12 +14,10 @@ def validate(req_schema):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                jsonschema.validate(
-                    instance=request.json, schema=req_schema
-                )
+                jsonschema.validate(instance=request.json, schema=req_schema)
             except jsonschema.ValidationError as ex:
                 resp = make_response(
-                    jsonify({'status': 'Error', 'description': ex.message})
+                    jsonify({"status": "Error", "description": ex.message})
                 )
                 resp.status_code = 400
                 return resp

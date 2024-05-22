@@ -1,8 +1,8 @@
 import csv
 from enum import Enum
 
-from models.roll import Roll
 from db import db_folder
+from models.roll import Roll
 
 __winner_lookup = {}
 

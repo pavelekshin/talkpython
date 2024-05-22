@@ -1,14 +1,13 @@
 import datetime
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy import Integer, String, DateTime, Index
+
+from sqlalchemy import DateTime, Index, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
 from data.session_factory import db
 
 
 class Player(db.Model):
-    __table_args__ = (
-        Index(None, "id"),
-    )
+    __table_args__ = (Index(None, "id"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(30), nullable=False)
@@ -22,4 +21,4 @@ class Player(db.Model):
         }
 
     def __repr__(self) -> str:
-        return f"{type(self).__qualname__}(id={self.id!r}, name={self.name!r}, created={self.created!r})"
+        return f"{type(self).__qualname__}(id={self.id!r}, name={self.name!r}, created={self.created!r})"  # noqa

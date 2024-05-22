@@ -1,25 +1,23 @@
 from collections import defaultdict
 
-from services import game_service, game_decider
 from models.player import Player
 from models.roll import Roll
+from services import game_decider, game_service
 
 
-class GameOverException(Exception):
+class GameOverError(Exception):
     pass
 
 
 class GameRound:
-
     def __init__(
-            self,
-            game_id: str,
-            player1: Player,
-            player2: Player,
-            p1_roll: Roll,
-            p2_roll: Roll
+        self,
+        game_id: str,
+        player1: Player,
+        player2: Player,
+        p1_roll: Roll,
+        p2_roll: Roll,
     ):
-
         self.p2_roll = p2_roll
         self.p1_roll = p1_roll
         self.game_id = game_id
@@ -37,7 +35,7 @@ class GameRound:
 
     def play(self):
         if self.is_over:
-            raise GameOverException("Game is already over, cannot play further.")
+            raise GameOverError("Game is already over, cannot play further.")
 
         d = game_decider.decide(self.p1_roll, self.p2_roll)
         self.decision_p1_to_p2 = d
@@ -46,22 +44,38 @@ class GameRound:
         self.record_roll(d.reversed(), self.player2, self.p2_roll, self.player2_wins)
 
         print(f"RECORDING ROUND {self.round}")
-        print("Player 1: {}: {}, prior score {}, outcome: {}".format(self.player1.name, self.p1_roll.name,
-                                                                     self.player1_wins,
-                                                                     d))
-        print("Player 2: {}: {}, prior score {}, outcome: {}".format(self.player2.name, self.p2_roll.name,
-                                                                     self.player2_wins,
-                                                                     d.reversed()))
         print(
-            "Score Player 1: {} : {}, Player 2: {} : {}".format(self.player1.name, self.player1_wins,
-                                                                self.player2.name,
-                                                                self.player2_wins))
+            "Player 1: {}: {}, prior score {}, outcome: {}".format(
+                self.player1.name, self.p1_roll.name, self.player1_wins, d
+            )
+        )
+        print(
+            "Player 2: {}: {}, prior score {}, outcome: {}".format(
+                self.player2.name, self.p2_roll.name, self.player2_wins, d.reversed()
+            )
+        )
+        print(
+            "Score Player 1: {} : {}, Player 2: {} : {}".format(
+                self.player1.name,
+                self.player1_wins,
+                self.player2.name,
+                self.player2_wins,
+            )
+        )
         print()
 
         self.is_over = game_service.is_game_over(self.game_id)
 
-    def record_roll(self, decision: game_decider.Decision, player: Player, roll: Roll, win_count: int):
-        final_round_candidate = self.round >= self.PLAY_COUNT_MIN and win_count + 1 >= self.WIN_COUNT_MIN
+    def record_roll(
+        self,
+        decision: game_decider.Decision,
+        player: Player,
+        roll: Roll,
+        win_count: int,
+    ):
+        final_round_candidate = (
+            self.round >= self.PLAY_COUNT_MIN and win_count + 1 >= self.WIN_COUNT_MIN  # noqa
+        )
         wins_game = final_round_candidate and decision == game_decider.Decision.win
 
         game_service.record_roll(player, roll, self.game_id, wins_game, self.round)
@@ -84,7 +98,10 @@ class GameRound:
             player_roll = game_service.find_roll_by_id(player_move.roll_id)
             opponent_roll = game_service.find_roll_by_id(opponent_move.roll_id)
 
-            if game_decider.decide(player_roll, opponent_roll) == game_decider.Decision.win:
+            if (
+                game_decider.decide(player_roll, opponent_roll)
+                == game_decider.Decision.win
+            ):
                 win_count += 1
 
         return win_count

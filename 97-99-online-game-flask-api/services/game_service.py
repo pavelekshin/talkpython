@@ -1,13 +1,13 @@
 from collections import defaultdict
 from typing import List, Optional
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 
 from data.session_factory import get_session
-from services import game_decider
 from models.move import Move
 from models.player import Player
 from models.roll import Roll
+from services import game_decider
 
 
 def get_game_history(game_id: str) -> List[Move]:
@@ -16,11 +16,13 @@ def get_game_history(game_id: str) -> List[Move]:
     :param game_id
     """
     with get_session() as session:
-        history = session.execute(
-            select(Move)
-            .filter(Move.game_id == game_id)
-            .order_by(Move.roll_number)
-        ).scalars().all()
+        history = (
+            session.execute(
+                select(Move).filter(Move.game_id == game_id).order_by(Move.roll_number)
+            )
+            .scalars()
+            .all()
+        )
     return history
 
 
@@ -54,10 +56,11 @@ def find_player(name: str) -> Player:
     :param name - name of flayer
     """
     with get_session() as session:
-        player = session.execute(
-            select(Player).
-            filter(Player.name == name)
-        ).scalars().first()
+        player = (
+            session.execute(select(Player).filter(Player.name == name))
+            .scalars()
+            .first()
+        )
     return player
 
 
@@ -82,13 +85,13 @@ def all_players() -> List[Player]:
     Get list of players
     """
     with get_session() as session:
-        players = session.execute(
-            select(Player)
-        ).scalars().all()
+        players = session.execute(select(Player)).scalars().all()
     return players
 
 
-def record_roll(player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int):
+def record_roll(
+    player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int
+):
     """
     Record roll into DB table
     :param player
@@ -113,9 +116,7 @@ def all_rolls() -> List[Roll]:
     Get all rolls
     """
     with get_session() as session:
-        rolls = session.execute(
-            select(Roll)
-        ).scalars().all()
+        rolls = session.execute(select(Roll)).scalars().all()
     return rolls
 
 
@@ -125,10 +126,7 @@ def init_rolls(rolls: List[str]):
     :param rolls - list of rolls name
     """
     with get_session() as session:
-        roll_count = session.execute(
-            select(func.count())
-            .select_from(Roll)
-        ).scalar()
+        roll_count = session.execute(select(func.count()).select_from(Roll)).scalar()
 
     if roll_count:
         return
@@ -143,10 +141,7 @@ def find_roll(name: str) -> Optional[Roll]:
     :param name - roll name
     """
     with get_session() as session:
-        roll = session.execute(
-            select(Roll).
-            filter(Roll.name == name)
-        ).scalars().first()
+        roll = session.execute(select(Roll).filter(Roll.name == name)).scalars().first()
     return roll
 
 
@@ -168,10 +163,9 @@ def find_roll_by_id(roll_id: int) -> Roll:
     :param roll_id - roll_id
     """
     with get_session() as session:
-        roll = session.execute(
-            select(Roll)
-            .filter(Roll.id == roll_id)
-        ).scalars().first()
+        roll = (
+            session.execute(select(Roll).filter(Roll.id == roll_id)).scalars().first()
+        )
     return roll
 
 
@@ -181,10 +175,11 @@ def find_player_by_id(player_id: int) -> Player:
     :param player_id - player_id
     """
     with get_session() as session:
-        player = session.execute(
-            select(Player)
-            .filter(Player.id == player_id)
-        ).scalars().first()
+        player = (
+            session.execute(select(Player).filter(Player.id == player_id))
+            .scalars()
+            .first()
+        )
     return player
 
 

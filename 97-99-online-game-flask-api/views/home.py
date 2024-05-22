@@ -2,7 +2,7 @@ import flask
 
 
 def build_views(app):
-    @app.route('/')
+    @app.route("/")
     def index():
         return "Hello world!"
 

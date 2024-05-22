@@ -17,6 +17,8 @@ def response_to_data(response: Response):
     try:
         return response.json()
     except Exception as ex:
-        raise FormatError("Invalid format, could not parse JSON. Error: {}, status={}, text={}".format(
-            ex, response.status_code, response.text
-        )) from ex
+        raise FormatError(
+            "Invalid format, could not parse JSON. Error: {}, status={}, text={}".format(
+                ex, response.status_code, response.text
+            )
+        ) from ex

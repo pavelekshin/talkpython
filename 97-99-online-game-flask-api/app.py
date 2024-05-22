@@ -1,7 +1,8 @@
 from flask import Flask
+
 from config.config import DevelopmentConfig
-from services import game_service, game_decider
-from views import home, game_api
+from services import game_decider, game_service
+from views import game_api, home
 
 
 def create_app(config=None):
@@ -13,6 +14,7 @@ def create_app(config=None):
         app.config.from_object(config)
     with app.app_context():
         from data.session_factory import db
+
         db.init_app(app)
         db.create_all()
         build_views(app)
@@ -29,7 +31,7 @@ def build_starter_data():
     roll_names = game_decider.all_roll_names()
     game_service.init_rolls(roll_names)
 
-    if not (computer := game_service.find_player("computer")):
+    if not game_service.find_player("computer"):
         game_service.create_player("computer")
 
 

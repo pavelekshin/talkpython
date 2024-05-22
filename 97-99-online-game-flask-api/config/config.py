@@ -3,6 +3,7 @@ from db.db_folder import get_db_path
 
 class Config:
     """Base config, uses staging database server."""
+
     __test__ = False
     TESTING = False
     DB_SERVER = "localhost"
@@ -17,29 +18,31 @@ class Config:
     }
 
     @property
-    def SQLALCHEMY_DATABASE_URI(self):
+    def sqlalchemy_database_uri(self):  # noqa
         raise NotImplementedError("Not implemented")
 
     @property
-    def SQLALCHEMY_ENGINE_OPTIONS(self):
+    def sqlalchemy_engine_options(self):  # noqa
         return self.ENGINE_OPTIONS
 
     @property
-    def SQLALCHEMY_ECHO(self):
+    def sqlalchemy_echo(self):  # noqa
         return self.ECHO
 
 
 class ProductionConfig(Config):
     """Uses production database server."""
+
     pass
 
 
 class DevelopmentConfig(Config):
     """Uses development database server."""
+
     TESTING = True
     ECHO = False
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///"
 
     def __init__(self, db_name=None):
         if db_name is None:
@@ -53,7 +56,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Uses testing server."""
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///:memory:"
+
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     TESTING = True
     ECHO = False
     DEBUG = True

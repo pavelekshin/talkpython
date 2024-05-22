@@ -1,10 +1,9 @@
 import datetime
 
-from data.session_factory import db
-from sqlalchemy import Integer, String, Boolean, DateTime, ForeignKey, Index
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
+from data.session_factory import db
 from models.player import Player
 from models.roll import Roll
 
@@ -14,13 +13,21 @@ class Move(db.Model):
         Index(None, "player_id", "id", "is_winning_play"),  # create multicolumn index
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    id: Mapped[int] = mapped_column(
+        Integer, primary_key=True, autoincrement=True, nullable=False
+    )
     roll_id: Mapped[int] = mapped_column(Integer, ForeignKey("roll.id"), nullable=False)
     game_id: Mapped[int] = mapped_column(String, nullable=False)
     roll_number: Mapped[int] = mapped_column(Integer, nullable=False)
-    player_id: Mapped[int] = mapped_column(Integer, ForeignKey("player.id"), nullable=False)
-    is_winning_play: Mapped[Boolean] = mapped_column(Boolean, default=False, nullable=False)
-    created: Mapped[datetime] = mapped_column(DateTime, default=datetime.datetime.now, index=True)
+    player_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("player.id"), nullable=False
+    )
+    is_winning_play: Mapped[Boolean] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    created: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.datetime.now, index=True
+    )
 
     def to_json(self, roll: Roll, player: Player):
         if self.roll_id != roll.id:
@@ -40,6 +47,9 @@ class Move(db.Model):
         }
 
     def __repr__(self) -> str:
-        return f"{type(self).__qualname__}(id={self.id!r}, roll_id={self.roll_id!r}, game_id={self.game_id!r}, \
-                    roll_number={self.roll_number!r}, player_id={self.player_id!r}, \
-                    is_winning_play={self.is_winning_play!r}, created={self.created!r})"
+        return (
+            f"{type(self).__qualname__}(id={self.id!r},"
+            f" roll_id={self.roll_id!r}, game_id={self.game_id!r}, "
+            f"roll_number={self.roll_number!r}, player_id={self.player_id!r},"
+            f" is_winning_play={self.is_winning_play!r}, created={self.created!r})"
+        )

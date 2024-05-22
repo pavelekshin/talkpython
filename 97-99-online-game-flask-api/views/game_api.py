@@ -5,23 +5,24 @@ import flask
 from flask import Flask, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 
+from data.session_factory import db
+from models.exceptions import InvalidAPIUsageError
+from schema.schema import CREATE_USER, PLAY_ROUND
 from schema.validator import validate
-from schema.schema import PLAY_ROUND, CREATE_USER
 from services import game_service
 from services.game import GameRound
-from data.session_factory import db
-from models.exceptions import InvalidAPIUsage
 
 
-def build_views(app: Flask):
+def build_views(app: Flask):  # noqa
     @app.before_request
     def log_request():
         app.logger.info(
             "path: {} | method: {} | body: {}".format(
                 flask.request.path,
                 flask.request.method,
-                flask.request.get_json() if flask.request.is_json
-                else flask.request.data
+                flask.request.get_json()
+                if flask.request.is_json
+                else flask.request.data,
             )
         )
 
@@ -29,8 +30,7 @@ def build_views(app: Flask):
     def log_response(response: flask.Response):
         app.logger.info(
             "status: {} | body: {}".format(
-                response.status,
-                response.get_data(as_text=True)
+                response.status, response.get_data(as_text=True)
             )
         )
         return response
@@ -40,7 +40,7 @@ def build_views(app: Flask):
         app.logger.error(f"Error: {ex}")
         db.session.rollback()
 
-    @app.errorhandler(InvalidAPIUsage)
+    @app.errorhandler(InvalidAPIUsageError)
     def handle_invalid_api_usage(ex):
         return jsonify(ex.to_dict()), ex.status_code
 
@@ -48,13 +48,12 @@ def build_views(app: Flask):
     def find_user(user: str):
         player = game_service.find_player(user)
         if not player:
-            raise InvalidAPIUsage("User was not found!", status_code=404)
+            raise InvalidAPIUsageError("User was not found!", status_code=404)
         return jsonify(player.to_json())
 
     @app.route("/api/game/users", methods=["PUT"])
     @validate(CREATE_USER)
     def create_user():
-
         username = flask.request.json.get("user").strip()
         player = game_service.create_player(username)
 
@@ -75,7 +74,9 @@ def build_views(app: Flask):
         history = game_service.get_game_history(game_id)
 
         if not history:
-            raise InvalidAPIUsage(f"History for game_id: {game_id} was not found!", status_code=404)
+            raise InvalidAPIUsageError(
+                f"History for game_id: {game_id} was not found!", status_code=404
+            )
 
         roll_lookup = {r.id: r for r in game_service.all_rolls()}
         player_lookup = {p.id: p for p in game_service.all_players()}
@@ -88,10 +89,13 @@ def build_views(app: Flask):
 
         data = {
             "is_over": is_over,
-            "moves": [h.to_json(roll_lookup[h.roll_id], player_lookup[h.player_id]) for h in history],
+            "moves": [
+                h.to_json(roll_lookup[h.roll_id], player_lookup[h.player_id])
+                for h in history
+            ],
             "player1": player1.to_json(),
             "player2": player2.to_json(),
-            "winner": player1.to_json() if wins_p1 >= wins_p2 else player2.to_json()
+            "winner": player1.to_json() if wins_p1 >= wins_p2 else player2.to_json(),
         }
 
         return jsonify(data)
@@ -113,7 +117,9 @@ def build_views(app: Flask):
         try:
             db_roll, db_user, game_id = validate_round_request()
         except ValueError as ex:
-            raise InvalidAPIUsage("Invalid request: {}".format(ex), status_code=400)
+            raise InvalidAPIUsageError(
+                "Invalid request: {}".format(ex), status_code=400
+            ) from ex
 
         computer_player = game_service.find_player("computer")
         computer_roll = random.choice(game_service.all_rolls())
@@ -121,15 +127,17 @@ def build_views(app: Flask):
         game = GameRound(game_id, db_user, computer_player, db_roll, computer_roll)
         game.play()
 
-        return jsonify({
-            "roll": db_roll.to_json(),
-            "computer_roll": computer_roll.to_json(),
-            "player": db_user.to_json(),
-            "opponent": computer_player.to_json(),
-            "round_outcome": str(game.decision_p1_to_p2),
-            "is_final_round": game.is_over,
-            "round_number": game.round
-        })
+        return jsonify(
+            {
+                "roll": db_roll.to_json(),
+                "computer_roll": computer_roll.to_json(),
+                "player": db_user.to_json(),
+                "opponent": computer_player.to_json(),
+                "round_outcome": str(game.decision_p1_to_p2),
+                "is_final_round": game.is_over,
+                "round_number": game.round,
+            }
+        )
 
     def validate_round_request():
         game_id = flask.request.json.get("game_id")
@@ -140,7 +148,7 @@ def build_views(app: Flask):
             raise ValueError("No user with name {}".format(user))
         if not (db_roll := game_service.find_roll(roll)):
             raise ValueError("No roll with name {}".format(roll))
-        if is_over := game_service.is_game_over(game_id):
+        if game_service.is_game_over(game_id):
             raise ValueError("This game is already over.")
 
         return db_roll, db_user, game_id

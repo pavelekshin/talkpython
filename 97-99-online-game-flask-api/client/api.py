@@ -1,5 +1,4 @@
 import uplink
-
 from uplink_helpers import raise_for_status, response_to_data
 
 
