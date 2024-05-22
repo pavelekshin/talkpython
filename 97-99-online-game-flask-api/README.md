@@ -1,10 +1,15 @@
 # Flask rock-scissor-paper game
 
+rock-scissor-paper game on Flask and SQLAlchemy ORM.
+User game client realise with uplink
+Test on pytest
+
 - SQLAlchemy ORM
 - SQLite
 - pytest
 - uplink
 - JSONSchema Validation
+- custom global error handlers, DB session context manager,
 
 well-structured code:
 
@@ -17,7 +22,7 @@ well-structured code:
 ├── services - logic
 ├── tests - pytest
 ├── views - api views
-├──app.py 
+├──app.py - main app
 ├──error_handlers.py - global error_handlers
 ├──exceptions.py  - global exceptions
 ├──helper_handlers.py - global helper_handlers
