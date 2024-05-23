@@ -9,26 +9,28 @@ tests/test_client.py ..........                                          [100%]
 ---------- coverage: platform linux, python 3.10.13-final-0 ----------
 Name                       Stmts   Miss  Cover   Missing
 --------------------------------------------------------
-app.py                        27      3    89%   11, 37-38
-config/config.py              35      2    94%   21, 35
-data/session_factory.py       17      6    65%   18-23
+app.py                        31      3    90%   14, 43-44
+config/config.py              38      8    79%   22, 26, 30, 42-45, 48
 db/db_folder.py                4      0   100%
-models/exceptions.py          12      0   100%
+error_handlers.py             12      2    83%   11-12
+exceptions.py                 12      0   100%
+helper_handlers.py             9      0   100%
 models/model_base.py           6      0   100%
-models/move.py                24      3    88%   27, 29, 43
-models/player.py              14      1    93%   25
-models/roll.py                14      1    93%   25
+models/move.py                23      3    87%   34, 36, 50
+models/player.py              13      1    92%   24
+models/roll.py                13      1    92%   24
 schema/schema.py               2      0   100%
-schema/validator.py           17      4    76%   20-25
-services/game.py              54      2    96%   40, 79
+schema/validator.py           17      4    76%   18-23
+services/game.py              54      2    96%   38, 93
 services/game_decider.py      52      6    88%   17, 21, 28-31, 38
-services/game_service.py      89      2    98%   70, 134
+services/game_service.py     101      5    95%   74, 137, 225, 227, 229
+session_factory.py            17      6    65%   16-21
 tests/__init__.py              0      0   100%
-tests/test_client.py         101      3    97%   31-33
-views/game_api.py             88      8    91%   46-47, 84, 121-122, 146, 148, 150
+tests/test_client.py         101      4    96%   47-50
+views/game_api.py             61      3    95%   45, 87-88
 views/home.py                  8      0   100%
 --------------------------------------------------------
-TOTAL                        564     41    93%
+TOTAL                        574     48    92%
 
 
-============================== 10 passed in 0.81s ==============================
+============================== 10 passed in 0.52s ==============================

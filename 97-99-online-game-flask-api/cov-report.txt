@@ -9,26 +9,28 @@ tests/test_client.py ..........                                          [100%]
 ---------- coverage: platform linux, python 3.10.13-final-0 ----------
 Name                       Stmts   Miss  Cover
 ----------------------------------------------
-app.py                        27      3    89%
-config/config.py              35      2    94%
-data/session_factory.py       17      6    65%
+app.py                        31      3    90%
+config/config.py              38      8    79%
 db/db_folder.py                4      0   100%
-models/exceptions.py          12      0   100%
+error_handlers.py             12      2    83%
+exceptions.py                 12      0   100%
+helper_handlers.py             9      0   100%
 models/model_base.py           6      0   100%
-models/move.py                24      3    88%
-models/player.py              14      1    93%
-models/roll.py                14      1    93%
+models/move.py                23      3    87%
+models/player.py              13      1    92%
+models/roll.py                13      1    92%
 schema/schema.py               2      0   100%
 schema/validator.py           17      4    76%
 services/game.py              54      2    96%
-services/game_decider.py      52      6    88%
-services/game_service.py      89      2    98%
+services/game_decider.py      52      5    90%
+services/game_service.py     101      5    95%
+session_factory.py            17      6    65%
 tests/__init__.py              0      0   100%
-tests/test_client.py         101      3    97%
-views/game_api.py             88      8    91%
+tests/test_client.py         101      4    96%
+views/game_api.py             61      3    95%
 views/home.py                  8      0   100%
 ----------------------------------------------
-TOTAL                        564     41    93%
+TOTAL                        574     47    92%
 
 
-============================== 10 passed in 0.82s ==============================
+============================== 10 passed in 0.55s ==============================
