@@ -140,3 +140,4 @@ dmypy.json
 
 #exclude Plotly HTML graphs
 */ploly_html/*.html
+*/project-plotly/*.html
