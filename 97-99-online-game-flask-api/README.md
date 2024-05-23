@@ -1,7 +1,7 @@
 # Flask rock-scissor-paper game
 
-rock-scissor-paper game on Flask and SQLAlchemy ORM.
-User game client realise with uplink.
+Rock-scissor-paper game on Flask and SQLAlchemy ORM.\
+User game client realise with uplink.\
 Test on pytest.
 
 - SQLAlchemy ORM
