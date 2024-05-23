@@ -6,10 +6,7 @@ from sqlalchemy.orm import Session
 
 from models.model_base import ModelBase
 
-db = SQLAlchemy(
-    model_class=ModelBase,
-    session_options={"expire_on_commit": False}
-)
+db = SQLAlchemy(model_class=ModelBase, session_options={"expire_on_commit": False})
 
 
 @contextmanager

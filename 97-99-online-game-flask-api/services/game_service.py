@@ -91,7 +91,11 @@ def all_players() -> List[Player]:
 
 
 def record_roll(
-        player: Player, roll: Roll, game_id: str, is_winning_play: bool, roll_num: int
+    player: Player,
+    roll: Roll,
+    game_id: str,
+    is_winning_play: bool,
+    roll_num: int,
 ):
     """
     Record roll into DB table

@@ -74,7 +74,7 @@ class GameRound:
         win_count: int,
     ):
         final_round_candidate = (
-            self.round >= self.PLAY_COUNT_MIN and win_count + 1 >= self.WIN_COUNT_MIN  # noqa
+            self.round >= self.PLAY_COUNT_MIN and win_count + 1 >= self.WIN_COUNT_MIN
         )
         wins_game = final_round_candidate and decision == game_decider.Decision.win
 

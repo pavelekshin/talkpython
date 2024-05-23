@@ -14,19 +14,19 @@ Test on pytest.
 well-structured code:
 
 ```bash
-├── client - client app
+├── client                          - client app
 ├── config
-├── db - db and csv 
-├── models - SQLAlchemy ORM models
-├── schema - JSONSchema and validation stuff
-├── services - logic
-├── tests - pytest
-├── views - api views
-├──app.py - main app
-├──error_handlers.py - global error_handlers
-├──exceptions.py  - global exceptions
-├──helper_handlers.py - global helper_handlers
-└──session_factory.py - global db session_factory
+├── db                              - db and csv 
+├── models                          - SQLAlchemy ORM models
+├── schema                          - JSONSchema and validation stuff
+├── services                        - logic
+├── tests                           - pytest
+├── views                           - api views
+├──app.py                           - main app
+├──error_handlers.py                - global error_handlers
+├──exceptions.py                    - global exceptions
+├──helper_handlers.py               - global helper_handlers
+└──session_factory.py               - global db session_factory
 ```
 
 

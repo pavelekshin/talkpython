@@ -11,7 +11,7 @@ from config.config import TestingConfig
 
 BASE_URL = "http://127.0.0.1:5000"
 BAD_URL = "{}/api/v2/game/status".format(BASE_URL)
-UUID4 = "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"  # noqa
+UUID4 = "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[4][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
 ROLLS = [
     "Rock",
     "Gun",

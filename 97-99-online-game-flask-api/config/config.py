@@ -18,15 +18,15 @@ class SQLAlchemyConfig:
     }
 
     @property
-    def sqlalchemy_database_uri(self):  # noqa
+    def sqlalchemy_database_uri(self):
         raise NotImplementedError("Not implemented")
 
     @property
-    def sqlalchemy_engine_options(self):  # noqa
+    def sqlalchemy_engine_options(self):
         return self.ENGINE_OPTIONS
 
     @property
-    def sqlalchemy_echo(self):  # noqa
+    def sqlalchemy_echo(self):
         return self.ECHO
 
 

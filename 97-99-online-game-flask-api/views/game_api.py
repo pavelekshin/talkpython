@@ -12,7 +12,6 @@ from services.game import GameRound
 
 
 def build_views(app: Flask):  # noqa
-
     @app.route("/api/game/users/<string:user>", methods=["GET"])
     def find_user(user: str):
         player = game_service.find_player(user)
